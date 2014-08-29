@@ -1,0 +1,21 @@
+
+Wikification is the task of identifying entity \emph{mentions} in text and linking those mentions to referent Wikipedia pages. The motivations for solving such a problem effectively are numerous. Wikification has been shown to be useful in many natural language processing tasks, including text classification \cite{use1} and numerous other tasks \cite{kulkarni}. Although many wikification works differ in the document collection which they are attempting to Wikify and also the expressions in those documents, they share the common problem denoted \emph{Disambiguation to Wikipedia} (D2W) \cite{roth}. As an example, consider the simple sentence, \emph{I am attending Wimbledon this summer}. Assume that a named entity recognition (NER) \cite{ner} system has managed to detect \emph{Wimbledon} and \emph{summer} as relevant entities. These entities would then have to be correctly linked to the Wikipedia pages referenced by URIs \url{http://en.wikipedia.org/wiki/The_Championships,_Wimbledon} and \url{http://en.wikipedia.org/wiki/Summer}. A closer look at this simple example shows two potential problems, assuming an off-the-shelf NER system works without error. The first is the decision of \emph{what} to disambiguate. One could make the (subjective) argument that the entities \emph{I} and \emph{summer} do not need to be linked, and might, in fact, distract a reader from the overall meaning of the text. Certainly, one can argue that the user experience would be less than pleasant if every single entity is linked to some Wikipedia page. The second problem is that of semantic ambiguity. Wimbledon here clearly refers to the prestigious tennis tournament, but Wimbledon is also a place in England. The problem is exacerbated when we consider that for a given entity, there are many candidate Wikipedia links. 
+Another challenging aspect of the problem is that the ambiguity is bi-directional. 
+In other words,
+multiple surface forms can refer to the same entity in the knowledge base, and a single
+surface form can potentially refer to multiple entities in the knowledge base. 
+For example,
+George Bush, the entity who was president in 2003, can be referred to by ``George Bush'',
+``George W. Bush'', ``Bush'', or other surface forms. Similarly, the surface 
+form ``Kennedy''
+can refer to any number of entities from the Kennedy family, including the president 
+who was
+assassinated.
+Furthermore, when performing NED \cite{cucerzan}, the knowledge base is
+typically assumed to be incomplete, meaning there are entities that exist in the world but do 
+not have corresponding records in the knowledge base. This is one challenging difference between
+NED and WSD -- when performing Word Sense Disambiguation, it is often assumed that the dictionary 
+containing all the word senses is complete.
+Correctly disambiguating the entity in terms of the link is a challenging problem, even in the supervised setting. \\
+In this paper, we present a framework for unsupervised entity linking using the Wikipedia API and basic but representative features. We are able to narrow the gap between the supervised and unsupervised frameworks to less than 10 percent, and show improvement of over 5 percent over baseline features, using a tri-gram model and simple enhancements to those baseline features. \\
+The rest of the paper is as follows. Section 2 describes some related work in this area, while Section 3 lays out the problem formulation. Section 4 describes the framework in some detail followed by the experimental results in Section 5. Section 6 concludes the paper.

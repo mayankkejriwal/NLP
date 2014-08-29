@@ -1,0 +1,136 @@
+
+
+\documentclass[runningheads,a4paper]{llncs}
+
+\usepackage{amssymb}
+\setcounter{tocdepth}{3}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{url}
+
+\urldef{\mailsa}\path|{kejriwal,tomas}@cs.utexas.edu|    
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+\noindent\keywordname\enspace\ignorespaces#1}
+
+\begin{document}
+
+\mainmatter  % start of an individual contribution
+
+% first the title is needed
+\title{Unsupervised Online Wikification: A Light Approach}
+
+% the name(s) of the author(s) follow(s) next
+%
+% NB: Chinese authors should write their first names(s) in front of
+% their surnames. This ensures that the names appear correctly in
+% the running heads and the author index.
+%
+\author{Mayank Kejriwal%
+\and Tomas McCandless}
+
+% the affiliations are given next; don't give your e-mail address
+% unless you accept that it will be published
+\institute{University of Texas at Austin\\
+\mailsa}
+
+%
+% NB: a more complex sample for affiliations and the mapping to the
+% corresponding authors can be found in the file "llncs.dem"
+% (search for the string "\mainmatter" where a contribution starts).
+% "llncs.dem" accompanies the document class "llncs.cls".
+%
+
+\toctitle{Lecture Notes in Computer Science}
+\tocauthor{Authors' Instructions}
+\maketitle
+
+\begin{abstract}
+Over the last decade, Wikipedia has emerged as the \emph{de facto} global knowledge base owing to its exponential growth in popularity. At the same time, there are many unstructured documents on the Web that can be \emph{enriched} by recognizing \emph{entities} within the document and linking them to specific pages in Wikipedia. Recent approaches have tackled this \emph{Entity Linking} problem by exploiting global and local feature engineering methods on Wikipedia \emph{dumps}. These approaches are supervised, in that they require training on manually provided data before they can disambiguate links to unknown entities. The problem is exacerbated by regular updates and additions to Wikipedia; hence, a dump cannot always be relied upon for \emph{online} wikification. In this paper, we present an unsupervised solution to online wikification by making judicious use of the Wikipedia API. To control complexity and bandwidth costs, we use conservative strategies with simple, but discriminative features. Experimental results on a test dataset used in a prior offline approach demonstrate that, in conjunction with the Wikipedia API, the best features can achieve over 80 percent accuracy on the online wikification task.  
+\keywords{Wikification, Entity Linking, Text Enrichment}
+
+\end{abstract}
+
+\section{Introduction}
+
+Wikification is the task of identifying entity \emph{mentions} in text and linking those mentions to referent Wikipedia pages \cite{wikification}. The motivations for solving such a problem effectively are numerous. Wikification has been shown to be useful in many natural language processing tasks, including text classification \cite{use1}, automatic topic indexing \cite{use3}, textbook enriching \cite{use2} and numerous other purposes \cite{kulkarni}. Although many wikification works differ in the \emph{document collection} they are attempting to wikify and also the \emph{degree}\footnote{There are Wikipedia articles for many common concepts (an extreme being the word `the'), which most approaches would not wikify. Clearly, there is a degree to which referent concepts \emph{should} be linked to Wikipedia or DBpedia.} of wikification, they share the common problem denoted \emph{Disambiguation to Wikipedia} (D2W) \cite{roth}. 
+
+As an example of D2W, consider the simple sentence, \emph{I am attending Wimbledon this summer}. Assume that a named entity recognition (NER) \cite{ner} system has managed to detect \emph{Wimbledon} and \emph{summer} as relevant entities. These entities would then have to be correctly linked to the Wikipedia pages referenced by URIs \url{http://en.wikipedia.org/wiki/The_Championships,_Wimbledon} and \url{http://en.wikipedia.org/wiki/Summer} respectively. A closer look at this simple example presents two potential problems, assuming an off-the-shelf NER system works without error. The first is the decision of \emph{what} to disambiguate. This relates to the degree problem earlier mentioned. We could make the (subjective) argument that the entities \emph{I} and \emph{summer} do not need to be linked, and might distract a reader from the overall meaning of the text. Certainly, the user experience would not be satisfactory if every single entity is linked to some Wikipedia page. The second problem is that of \emph{semantic ambiguity}. `Wimbledon' in the example clearly refers to the prestigious tennis tournament, but Wimbledon is also a place in England. The problem exists because, for a given entity, there are many candidate Wikipedia links. 
+
+Moreover, mappings may be many-many. 
+That is, multiple surface forms refer to the same entity in the knowledge base, and a single
+surface form can potentially refer to multiple entities in the knowledge base. For example,
+George Bush, the entity who was president in 2003, can be referred to by `George Bush',
+`George W. Bush', `Bush', or other surface forms. Similarly, the surface 
+form `Kennedy'
+can refer to any number of entities from the Kennedy family, including the president 
+who was
+assassinated. In many cases, it may not be possible, from the information provided in the input text, to produce the correct disambiguation with sufficient confidence. 
+Furthermore, when performing entity linking \cite{cucerzan}, we cannot assume the knowledge base to always be complete. Potentially, there are entities that exist in the world but do 
+not have corresponding entries in the knowledge base. This is one challenging difference between
+entity linking and word sense disambiguation (WSD); when performing WSD, we can usually assume that the dictionary 
+containing all the word senses is complete \cite{wsd}.
+
+Finally, we note that the knowledge base we are attempting to link entities to in this paper is Wikipedia\footnote{Equivalently DBpedia or any other frequently used and accessed knowledge base that closely mirrors Wikipedia in content.}, which is constantly in a state of flux. As an example, both Wimbledon and the FIFA world cup finals will have finished just around the submission of this work. Not only will Wikipedia pages for those specific events be updated, but numerous auxiliary pages will also be updated\footnote{For example, the player who won the Wimbledon final, players who scored goals in the world cup final etc. will have their statistics and pages updated.}. It is not a stretch to imagine that such updates happen fairly regularly, though not all updates are of equal consequence. As a particular use-case for online Wikification, consider wikifying a \emph{breaking news} article. If the article is describing some unexpected event on which an article newly got created in the Wikipedia corpus, it will be accessible to the Wikipedia API\footnote{\url{http://www.mediawiki.org/wiki/API:Main_page}} sooner than it will be included in a dump, which are only created periodically. Training on a dump also mandates non-trivial steps such as curation, indexing and parsing \cite{ir}.  
+
+To address these problems, we present a framework for unsupervised entity linking using the Wikipedia API, and basic but representative features. We note that this is a departure from recent conventional efforts that have used increasingly sophisticated (and expensive) features. We are able to narrow the gap between the supervised and unsupervised frameworks to less than 10 percent, and show improvement of over 5 percent over baseline features, using a tri-gram model and simple enhancements to baseline features. The primary goal is to present a \emph{light} system that does not require significant expertise to deploy and can operate without manual supervision. To the best of our knowledge, no work currently attempts unsupervised wikification in an online setting.
+
+The rest of the paper is as follows. Section \ref{related} describes some related work in this area, while Section \ref{prelim} lays out some preliminaries and the problem formulation. Section \ref{system} describes the framework in some detail followed by the experimental results in Section \ref{experiments}. Section \ref{conclusion} concludes the paper.
+
+ 
+\section{Related Work}\label{related}
+\input{related_work.tex}
+
+\section{Preliminaries}\label{prelim}
+In this section, we give a succinct description of some preliminaries to place the rest of the paper in context. For a more comprehensive discussion, we refer the reader to Ratinov et al. \cite{roth}. 
+\input{formulation.tex}
+
+\section{System}\label{system}
+\input{algorithm.tex}
+
+\section{Experiments}\label{experiments}
+
+In this section, the dataset is first described, followed by the methodology. This is followed by some results and a discussion of those results. 
+\subsection{Dataset}
+
+We used the \emph{Wiki} test set first developed by the authors of GLOW \cite{roth}. They made the dataset available on their companion project website\footnote{\url{http://cogcomp.cs.illinois.edu/data}}. The Wiki data came with training data and test data and were extracted from `difficult'\footnote{As described by the GLOW authors.} Wikipedia paragraphs (baseline features in GLOW yield at least a 10 percent error rate on these extracted paragraphs). The training data was much larger than the test data. In their work, Ratinov et al. first trained a system employing both global and local features using the training data, and then evaluated both a ranker and linker on the test data. 
+
+Since we are only evaluating \emph{unsupervised} linking, we neglected the training data completely and evaluated the system on the test data. This data consists of 40 documents with a total of 839 mentions (extracted by Stanford NER) between them. Some of these were \emph{nulls} (that is, had no corresponding Wikipedia page according to the provided ground truth) and for others, the Wikipedia API returned multiple candidates (and that were hence ignored). In total, there were 724 mentions for which the API returned a single link\footnote{This also demonstrates that the recall of the conservative strategy is not as low as we might expect.}. Some of these returned links were `wrong' in that they corresponded to a null in the ground truth or a \emph{different} Wikipedia page than what the API returned. On average, we found about 78 percent of the returned links to be correct. Thus, a naive approach that would randomly sample N links (used as one of our baselines) would, on average, achieve this precision.   
+\subsection{Methodology}
+We experimented with each of the three features as well as their combinations using three language models: bag of words, bi-grams and tri-grams. For each model, two sets of experiments were conducted. Both experiments use $N$ as the independent variable, and for each document, rank the top N scoring (where the score is the dot product of the feature vectors) candidate links as correct. Accuracy is measured against N. For example, if all N chosen links are correct, the accuracy is 100 percent. Although N does not technically represent \emph{recall}, it is somewhat analogous. Note however that since we have multiple documents, there are two typical ways to calculate accuracy for a given value of N when the algorithm is run on \emph{all} documents. The first, which we call the \emph{surface forms accuracy}, is to compute the accuracy across the full set of mentions in the entire corpus. There is no averaging across documents. The second is to compute the accuracy for each document individually, and to then average accuracies across documents, with each document getting equal weight (\emph{documents accuracy}). As a simple example of the difference, suppose there are two documents with 20 mentions in the first document and 40 mentions in the second. Suppose, on average, that the accuracy on the first document is 80 percent, and on the second is 75 percent. The documents accuracy would then simply be 77.5 percent. However, the surface forms accuracy would be $(.75*40+.80*20)/60=76.667$ percent. We show the results for both forms of averaging in the experiments.
+Recall that one of the features proposed is that of stop-words removal. We used two baselines: random selection of N candidates and normalized TF. By supplementing normalized TF with IDF, stop-words removal or both, we measure the enhancement in performance for all the models.
+\subsection{Results and Discussion}
+The first interesting trend observed in all the figures is that a standard tradeoff is not observed, where accuracy would decline with increasing N. Instead, the figures yield a flat curve of about 78 percent for the surface forms accuracy and 77 percent for the documents accuracy. In general, absolute differences aside, the surface forms accuracy and documents accuracy curves were found to mirror each other closely (with only about one percent difference in absolute numbers) so we refer to a single curve in the following discussion (surface forms). The value of N at which accuracy peaks is between 15 and 20 for all the figures. 
+
+More surprisingly, the TF baseline actually performs worse than the random baseline till this peak value, after which it usually shows slight improvement, before leveling off with the other curves. Note also that the combination of features (TF, IDF and stop-words) works best, but except on the bigrams model, the other features actually show better performance on \emph{lower} values of N. The best performance for N between 2 and 5 was demonstrated by TF and IDF on the trigrams model. Over that range, it briefly outperforms the combined three features of TF, IDF and stop-words.
+
+It is interesting to compare the unsupervised performance with the supervised performance using a much more sophisticated method and features than what we used (in the original GLOW paper) \cite{roth}. Using a trained linker, the authors were able to achieve about a 92 percent accuracy . As mentioned earlier, the training data was much larger than the test data, yielding high levels of supervision. The ranker accuracy was also assumed to be perfect when evaluating the linker in the original paper \cite{roth}. Thus, the only task addressed was determining the `nulls' in the ground truth. On the other hand, we had to rely on the Wikipedia API for our `ranker candidate'. Some of these were wrong. In this sense, the unsupervised linker problem is harder, since we have to determine both nulls (mentions that don't correspond to a Wikipedia page at all in the gold standard) as well as mentions for which wrong links were returned by the API. Although the 10 percent difference is considerable, we believe it can be narrowed by including other inexpensive features and heuristics.  An encouraging result is that, by using a tri-gram model with some intuitive enhancements, an accuracy of over 83 percent was achieved over a small range for N. 
+
+\begin{figure}
+\centering
+\includegraphics[height=5cm, width=12.5cm]{normal}
+\caption{Results of the procedure when no n-gram features are employed. (a) represents surface forms accuracy and (b) shows documents accuracy}
+\label{fig1}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[height=5cm, width=12.5cm]{bigrams}
+\caption{Results of the procedure when TF includes bi-gram features. (a) represents surface forms accuracy and (b) shows documents accuracy}
+\label{fig1}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[height=5cm, width=12.5cm]{trigrams}
+\caption{Results of the procedure when TF includes tri-gram features. (a) represents surface forms accuracy and (b) shows documents accuracy}
+\label{fig1}
+\end{figure}
+
+\section{Conclusion and Future Work}\label{conclusion}
+In this paper, we presented a practical solution to unsupervised entity linking using the Wikipedia API. Using bi-gram and tri-gram models, together with enhancements to basic features like TF, we achieved a 5 percent performance boost on baseline features and narrowed the gap between supervised and unsupervised linker accuracy to less than 10 percent. The key advantages of the proposed system is that it is light, has low bandwidth and computational costs, relies on tools that are freely available and most importantly, can be extended to other knowledge bases that offer similar access points. We expect the system to be particularly amenable to mobile deployment; for example, as a mobile Semantic Web app.
+
+Future work will investigate the challenges of this deployment more closely, along with attempting to narrow the observed supervised-unsupervised performance gap through better features. We will also carry out user studies to determine both the values of N and the minimum accuracy expected for a satisfactory user experience.    
+
+
+\bibliography{typeinst}
+\bibliographystyle{abbrv}
+\end{document}

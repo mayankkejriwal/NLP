@@ -1,0 +1,16 @@
+A variable may also be declared as fully dynamic using the generic keyword.  In this case no value need be assigned to it at declaration time
+;Type casts:A value can be converted to another type using a cast operation.  The syntax is similar the that in C++ but simplified.  Casts are always performed at runtime and a specific cast operator may be defined for a class.
+;Functions:A function is a program segment that is called and performs some operations before (possibly) returning a value.  If no value is explicitly returned, the value none is returned.
+A function can be declared as returning a particular type.  The actual value returned is cast to the return type at runtime.
+;Classes:A class is an object oriented type.  They may be derived from other classes to form a ''class hierarchy''.  They provide a set of functions and operators that manipulate instances of the class.  The class may take arguments and its constructor is the body of the block.
+;Access control:Like C++ and Java, Aikido controls access to all members of blocks.  By default membership is ''private'' but may be made  ''public'' or ''protected'' using keywords.
+;Interfaces:Similar to Java, Aikido provides an interface concept to constitute a contract to provide certain functions in the class.  A class may implement one or more interfaces
+;Closures and coroutines:A   closure   in Aikido is an object that contains everything that is needed to invoke a function from any point in the program.  This includes the function's static link chain.  A closure is created by passing a function name as an argument or by returning it from a function.  A   coroutine   is an extension of a closure that also includes the current state of a function (all data, program counter and registers).  A   coroutine   yields to its caller using the ''yield'' keyword.  It can be resumed inside a ''foreach'' statement or by calling the ''next()'' function on the closure.
+;Polymorphic functions:Similar to Java, all public functions in a block are be overridden by a block derived from it.  This is known as ''virtual functions'' in C++.
+;Static members:Block members may be declared ''static'' meaning that their memory resides in the outer program level.  This allows them to maintain their value.
+;Threads:A thread is a ''thread of control'' in the program and executes independently of other threads.
+;Packages: A package is a collection of program constructs collected in one place for use by another program.  They may be used to provide libraries.
+;Monitors:A monitor is a thread synchronization object that controls access to memory and also provides a signaling facility
+;Strings:A string is a sequence of characters.  Many operations are available for them including insertion, searching, deletion, shifting, etc.
+;Vectors:A vector is a sequence values of any type.  They may be manipulated and extended by built-in operations
+

@@ -1,0 +1,106 @@
+\begin{thebibliography}{10}
+
+\bibitem{use2}
+R.~Agrawal, S.~Gollapudi, A.~Kannan, and K.~Kenthapadi.
+\newblock Data mining for improving textbooks.
+\newblock {\em ACM SIGKDD Explorations Newsletter}, 13(2):7--19, 2012.
+
+\bibitem{lodifier}
+I.~Augenstein, S.~Pad{\'o}, and S.~Rudolph.
+\newblock Lodifier: Generating linked data from unstructured text.
+\newblock In {\em The Semantic Web: Research and Applications}, pages 210--224.
+  Springer, 2012.
+
+\bibitem{bunescu}
+R.~C. Bunescu and M.~Pasca.
+\newblock Using encyclopedic knowledge for named entity disambiguation.
+\newblock In {\em EACL}, volume~6, pages 9--16, 2006.
+
+\bibitem{wikification}
+A.~Csomai and R.~Mihalcea.
+\newblock Linking educational materials to encyclopedic knowledge.
+\newblock {\em Frontiers in Artificial Intelligence and Applications}, 158:557,
+  2007.
+
+\bibitem{cucerzan}
+S.~Cucerzan.
+\newblock Large-scale named entity disambiguation based on wikipedia data.
+\newblock In {\em EMNLP-CoNLL}, volume~7, pages 708--716, 2007.
+
+\bibitem{extraction}
+P.~Exner and P.~Nugues.
+\newblock Entity extraction: From unstructured text to dbpedia rdf triples.
+\newblock In {\em The Web of Linked Entities Workshop (WoLE 2012)}, 2012.
+
+\bibitem{stanford}
+J.~R. Finkel, T.~Grenager, and C.~Manning.
+\newblock Incorporating non-local information into information extraction
+  systems by gibbs sampling.
+\newblock In {\em Proceedings of the 43rd Annual Meeting on Association for
+  Computational Linguistics}, pages 363--370. Association for Computational
+  Linguistics, 2005.
+
+\bibitem{use1}
+E.~Gabrilovich and S.~Markovitch.
+\newblock Computing semantic relatedness using wikipedia-based explicit
+  semantic analysis.
+\newblock In {\em IJCAI}, volume~7, pages 1606--1611, 2007.
+
+\bibitem{global1}
+X.~Han and J.~Zhao.
+\newblock Named entity disambiguation by leveraging wikipedia semantic
+  knowledge.
+\newblock In {\em Proceedings of the 18th ACM conference on Information and
+  knowledge management}, pages 215--224. ACM, 2009.
+
+\bibitem{svm}
+T.~Joachims.
+\newblock Making large scale svm learning practical.
+\newblock 1999.
+
+\bibitem{kulkarni}
+S.~Kulkarni, A.~Singh, G.~Ramakrishnan, and S.~Chakrabarti.
+\newblock Collective annotation of wikipedia entities in web text.
+\newblock In {\em Proceedings of the 15th ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, pages 457--466. ACM, 2009.
+
+\bibitem{ir}
+C.~D. Manning, P.~Raghavan, and H.~Sch{\"u}tze.
+\newblock {\em Introduction to information retrieval}, volume~1.
+\newblock Cambridge university press Cambridge, 2008.
+
+\bibitem{use3}
+O.~Medelyan.
+\newblock {\em Human-competitive automatic topic indexing}.
+\newblock PhD thesis, The University of Waikato, 2009.
+
+\bibitem{wikify}
+R.~Mihalcea and A.~Csomai.
+\newblock Wikify!: linking documents to encyclopedic knowledge.
+\newblock In {\em Proceedings of the sixteenth ACM conference on Conference on
+  information and knowledge management}, pages 233--242. ACM, 2007.
+
+\bibitem{milne}
+D.~Milne and I.~H. Witten.
+\newblock Learning to link with wikipedia.
+\newblock In {\em Proceedings of the 17th ACM conference on Information and
+  knowledge management}, pages 509--518. ACM, 2008.
+
+\bibitem{ner}
+D.~Nadeau and S.~Sekine.
+\newblock A survey of named entity recognition and classification.
+\newblock {\em Lingvisticae Investigationes}, 30(1):3--26, 2007.
+
+\bibitem{roth}
+L.~Ratinov, D.~Roth, D.~Downey, and M.~Anderson.
+\newblock Local and global algorithms for disambiguation to wikipedia.
+\newblock In {\em Proceedings of the 49th Annual Meeting of the Association for
+  Computational Linguistics: Human Language Technologies-Volume 1}, pages
+  1375--1384. Association for Computational Linguistics, 2011.
+
+\bibitem{wsd}
+M.~Stevenson and Y.~Wilks.
+\newblock Word-sense disambiguation.
+\newblock {\em The Oxford Handbook of Comp. Linguistics}, pages 249--265, 2003.
+
+\end{thebibliography}

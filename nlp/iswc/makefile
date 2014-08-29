@@ -1,0 +1,2 @@
+tex:
+	sh ./typeinst.sh

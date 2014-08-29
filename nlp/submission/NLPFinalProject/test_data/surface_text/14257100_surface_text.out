@@ -1,0 +1,1073 @@
+Priority :: CONFIG.SYS is the primary configuration file for the DOS, OS/2 as well as similar operating systems. It is a special ASCII text file that contains user-accessible setup or configuration directives evaluated by the operating system during boot. CONFIG.SYS was introduced with DOS 2.0.
+
+
+== Usage ==
+The directives in this file configure DOS for use with devices and applications in the system. The CONFIG.SYS directives also set up the memory managers in the system. After processing the CONFIG.SYS file, DOS proceeds to load and execute the command shell specified in the SHELL line of CONFIG.SYS, or COMMAND.COM if there is no such line. The command shell in turn is responsible for processing the AUTOEXEC.BAT file.
+CONFIG.SYS is composed mostly of name=value directives which look like variable assignments. In fact, these will either define some tunable parameters often resulting in reservation of memory, or load files, mostly device drivers and TSRs, into memory.
+In DOS, CONFIG.SYS is located in the root directory of the drive from which the system was booted.
+Some versions of DOS will probe for alternative filenames taking precedence over the default CONFIG.SYS filename if they exist:
+While older versions of Concurrent DOS 3.2 to 4.1 did not support CONFIG.SYS files at all, later versions of Concurrent DOS 386 and Concurrent DOS XM, as well as Multiuser DOS, System Manager and REAL/32 will probe for CCONFIG.SYS (with "C" derived from "Concurrent") instead of CONFIG.SYS. Some versions of Multiuser DOS use a filename of CCONFIG.INI instead, whereas REAL/32 is known to look for MCONFIG.SYS. These operating systems support many additional and different configuration settings not known under MS-DOS/PC DOS, but they are stored in the binary repository named CCONFIG.BIN rather than in CCONFIG.INI. Both files are typically modified through a configuration utility named CONFIG.EXE only.
+Under DR DOS 3.31, PalmDOS 1.0, Novell DOS 7, OpenDOS 7.01, and DR-DOS 7.02 and higher, a file named DCONFIG.SYS (with "D" derived from "DR DOS"), if present, will take precedence over CONFIG.SYS. Since DR DOS 6.0 this was used in conjunction with disk compression software, where the original boot drive C: would become drive D: after loading the compression driver (and the "D" in the file name came in handy as well), but it is commonly used to help maintain multiple configuration files in multi-boot scenarios. In addition to this, OpenDOS 7.01 and DR-OpenDOS 7.02 will look for a file named ODCONFIG.SYS, whereas some issues of DR-DOS 7.02 and higher will instead also look for DRCONFIG.SYS. Further, under DR DOS 6.0 and higher, the SYS /DR:ext command can be used to change the default file extensions. For example, with SYS /L /DR:703 the written Volume Boot Record would look for a renamed and modified IBMBIO.703 system file (instead of the default IBMBIO.COM) and the IBMBIO.703 would look for IBMDOS.703 and [D]CONFIG.703 (instead of IBMDOS.COM and [D]CONFIG.SYS), so that multiple parallel sets of files can coexist in the same root directory and be selected via a boot-loader like LOADER, supplied with Multiuser DOS and DR-DOS 7.02/7.03. The SHELL directive is enhanced to provide means to specify alternative AUTOEXEC.BAT files via /P[:filename.ext] and in this specific scenario, COMMAND.COM will accept file extensions other than ".BAT" as well (both features are also supported by 4DOS). Under DR DOS 6.0 and higher, the CONFIG.SYS directive CHAIN=filespec can be used to continue processing in the named file, which does not necessarily need to reside in the root directory of the boot drive. DR-DOS 7.02 and higher optionally support an additional parameter as in CHAIN=filespec,label to jump to a specific :label in the given file. DR-DOS 7.03 and higher support a new SYS /A parameter in order to copy the corresponding CONFIG.SYS and AUTOEXEC.BAT files alongside with the system files.
+FreeDOS implements a similar feature with its FDCONFIG.SYS configuration file. PTS-DOS uses CONFIG.PTS.
+Both CONFIG.SYS and AUTOEXEC.BAT can be found included in the root folder of Windows 95, and Windows 98 boot drives, as they are based on DOS. Typically, these files are left empty, with no content, as they are not strictly required to run Windows programs from these versions.
+Windows ME does not even parse the CONFIG.SYS file during the Windows boot process, loading those settings from the Windows Registry instead:
+HKLM\System\CurrentControlSet\Control\SessionManager\Environment
+Under FlexOS, CONFIG.SYS is a binary file defining the resource managers and device drivers loaded.
+
+
+== CONFIG.SYS directives ==
+ : (DR DOS 5.0 and higher only) 
+Defines labels in CONFIG.SYS as jump targets for CHAIN, DRSWITCH, GOTO, GOSUB and SWITCH directives.
+ ; (DOS 6.0 and DR DOS 6.0 and higher) 
+Similar to REM, but can be used also for in-line comments (following other CONFIG.SYS directives). See COMMENT. (Under MS-DOS/PC DOS the inline-comment is not ignored if put in double-quotes.)
+ * (PTS-DOS only) 
+Used to lead in in-line comments in addition to the ; directive.
+ ? (DR DOS 3.41 and higher and FreeDOS only) 
+Displays a Yes/No query and (since DR DOS 5.0) optional message to ask the user for confirmation to execute the following CONFIG.SYS directives. (FreeDOS does not support optional messages, but optional conditions in conjunction with boot menus defined with MENU and MENUDEFAULT.) (DOS 6.0 and higher supports a similar feature by adding a ? after the corresponding CONFIG.SYS directive, f.e. DEVICE? or DEVICE?= instead of ?DEVICE. This variant is also supported by DR DOS.)
+ ! (FreeDOS only) 
+Unconditionally execute the following CONFIG.SYS directive.
+ ABORT (PTS-DOS only) 
+Specifies if programs can be aborted on errors.
+ ACCDATE (MS-DOS 7.0 and higher only, ignored under DR-DOS 7.02 and higher) 
+Configures which drives should store file access date stamps in the reserved area of directory entries in FAT file systems.
+ AT (PTS-DOS only) 
+Conditional execution on AT-compatible machines only.
+ AUTOCHECK (PTS-DOS only) 
+Boot manager.
+ AUTOFAIL (OS/2 only) 
+Configures verbosity of error messages.
+ AUX (DR-DOS 7.02 and higher only) 
+Changes internal default serial device driver (COM1: to COM4:) for AUX: device.
+ AVAILDEV (DOS 2.0-2.1 and DR-DOS 7.02 and higher only) 
+Disables the availability of character devices outside of phantom \DEV directory.
+ BASEDEV (OS/2 only) 
+Loads base device driver into memory.
+ BEEP (DR-DOS 7.02 and higher only) 
+Emits a short beep, even if audible notifications are disabled via SWITCHES=/Q.
+ BOOTNEXT (DRMK only) 
+Specifies operating system to be booted.
+ BREAK (DOS 2.0 and DR DOS 3.31 and higher; OS/2) 
+Sets or clears extended ^ Ctrl+C checking.
+ BUFFERS (DOS 2.0 and DR DOS 3.31 and higher; OS/2) 
+Specifies the number of disk buffers to allocate.
+ BUFFERSHIGH (MS-DOS 7.0 and DR-DOS 7.02 and higher and FreeDOS only) 
+Same as BUFFERS, but explicitly loads buffers into HMA or UMB (like HIBUFFERS under DR DOS 6.0 and higher).
+ CALL (OS/2 4.0 and higher only) 
+Similar to INSTALL under DOS, loads programs in CONFIG.SYS. Similar to RUN under OS/2, but runs in foreground and halts CONFIG.SYS processing until return.
+ CAPSLOCK (DR-DOS 7.02 and higher only) 
+Specifies whether the keyboard ⇬ Caps Lock status is turned on or off.
+ CDDNAME (PTS-DOS only) 
+Specifies the name of the CD-ROM hardware driver.
+ CDDBUFFERS (PTS-DOS only) 
+Specifies the number of buffers for CD-ROM access.
+ CHAIN (DR DOS 5.0 and higher only) 
+Continues CONFIG.SYS processing in new file and (since DR-DOS 7.02) at optional label.
+ CLOCK (PTS-DOS only) 
+Specifies the type of clock used by the system.
+ CLS (DR DOS 6.0 and higher only) 
+Clears screen.
+ CODEPAGE (OS/2 only) 
+Specifies the OEM codepage(s).
+ CMOSADDR (PTS-DOS only) 
+Specifies the address of the CMOS RAM.
+ COLOR (PTS-DOS only) 
+Specifies colors for boot menus.
+ COM1 (DR-DOS 7.02 and higher only)
+Defines count and logical order and configures I/O address and timeout for COM1: device.
+ COM2 (DR-DOS 7.02 and higher only) 
+Defines count and logical order and configures I/O address and timeout for COM2: device.
+ COM3 (DR-DOS 7.02 and higher only) 
+Defines count and logical order and configures I/O address and timeout for COM3: device.
+ COM4 (DR-DOS 7.02 and higher only) 
+Defines count and logical order and configures I/O address and timeout for COM4: device.
+ COMAREA (PTS-DOS only) 
+Specifies buffer for DMA.
+ COMMENT (DOS 4.0 and higher and RxDOS, ignored under DR-DOS 7.02 and higher and under PTS-DOS) 
+Redefines the lead-in character(s) for CONFIG.SYS inline-comments, or causes the following line to be ignored.
+ COUNTRY (DOS 3.0 and DOS Plus 2.1 with FIDDLOAD and DR DOS 3.31 and higher; OS/2) 
+Enables and configures international support.
+ CPOS (DR DOS 6.0 and higher only) 
+Sets display cursor to specified position for configuation menus.
+ CPSW (MS-DOS 4.00-4.01 only, ignored under DR-DOS 7.02 and higher) 
+For codepage switching support.
+ CPU (PTS-DOS only) 
+Specifies RAM refresh speed.
+ CPU88 (PTS-DOS only) 
+Conditional execution on 8088 CPUs only.
+ CPU88+ (PTS-DOS only) 
+Conditional execution on 8088 and higher CPUs only.
+ CPU86 (PTS-DOS only) 
+Conditional execution on 8086 CPUs only.
+ CPU86+ (PTS-DOS only) 
+Conditional execution on 8086/8088 and higher CPUs only.
+ CPU286 (PTS-DOS only) 
+Conditional execution on 286 CPUs only.
+ CPU286+ (PTS-DOS only) 
+Conditional execution on 286 and higher CPUs only.
+ CPU386 (DR-DOS 7.02 and higher and PTS-DOS only)
+Conditional execution on 386 and higher CPUs only, f.e. CPU386 DEVICE=C:\DOS\EMM386.EXE or CPU386 GOTO label386
+ CPU386+ (PTS-DOS only) 
+Conditional execution on 386 and higher CPUs only.
+ CPU486 (PTS-DOS only) 
+Conditional execution on 486 CPUs only.
+ CPU486+ (PTS-DOS only) 
+Conditional execution on 486 and higher CPUs only.
+ DDSCS (EDR-DOS 7.01.07 only) 
+Configures the relocation of the drive descriptor tables.
+ DEBLOCK (DR DOS 6.0 (1993 update) and higher only) 
+Specifies the memory segment address up to which multi-sector disk data deblocking is allowed.
+ DEBUG (DR DOS 3.31 - 6.0 and 7.02 and higher only) 
+Enables internal debugger support.
+ DEFAULT (PTS-DOS only) 
+Boot manager.
+ DEVICE (DOS 2.0 and DOS Plus 2.1 with FIDDLOAD and DR DOS 3.31 and higher; OS/2) 
+Loads a device driver into memory.
+ DEVICEHIGH (DOS 5.0 and DR DOS 6.0 and higher; OS/2) 
+Loads a device driver into upper memory. (Same as HIDEVICE in DR DOS 5.0.)
+ DEVINFO (OS/2 only) 
+Configures country and codepage information for KBD, SCR, LPT1, LPT2, LPT3 devices.
+ DISKCACHE (OS/2 only, ignored under DR-DOS 7.02 and higher) 
+Configures cache memory sizes.
+ DISKETTE (PTS-DOS only) 
+Specifies floppy disk compatibility mode.
+ DISPLAY (PTS-DOS only) 
+Specifies display font.
+ DOS (DOS 5.0 and DR DOS 6.0 and higher; OS/2) 
+Specifies whether to load DOS into the high memory area and/or use upper memory. (Similar to HIDOS=ON under DR DOS 5.0.)
+ DOSDATA (PC DOS 7.0 and higher, FreeDOS, EDR-DOS 7.01.07 and DRMK only) 
+Specifies whether to load DOS tables (BUFFERS, FCBS, FILES, LASTDRIVE, STACKS) into upper memory.
+ DOSDIR (PTS-DOS only) 
+Specifies alternative path to search for DOS files.
+ DPBS (DRMK only)
+ DPATH (OS/2 3.0 and higher only) 
+Specifies the search path for data files.
+ DRIVATTR (PTS-DOS only) 
+Specifies physical parameters of disk drives.
+ DRIVPARM (DOS 3.2 and higher) 
+Define parameters for unrecognized drives.
+ DRSWITCH (DR DOS 7.02 and higher only) 
+See SWITCH.
+ DUMPPROCESS (OS/2 3.0 and higher only) 
+Enables and specifies drive for PDUMP.nnn error logs.
+ ECHO (DR DOS 5.0 and higher, and PTS-DOS and FreeDOS only) 
+Displays a message on screen.
+ EECHO (FreeDOS only) 
+Displays a message including ANSI Escape sequences.
+ ERREXE (PTS-DOS only) 
+Specifies if additional checks should be carried out when starting programs.
+ ERROR (DR DOS 6.0 and higher only) 
+Specifies an error / return code to be assumed in the following.
+ EXECA20OFF (PTS-DOS only) 
+Specifies the state of the A20 gate when starting a program.
+ EXIT (DR DOS 6.0 and higher only) 
+Finishes CONFIG.SYS processing before the end of the file has been reached (except for SWITCHES and SHELL directive processing under some conditions).
+ FASTOPEN (DR DOS 3.31 and higher and PTS-DOS only)
+Specified the size of the hash table for fast file open operations. Works considerably differently from the external MS-DOS/PC DOS FASTOPEN driver.
+ FCBS (DOS 3.0 and DR DOS 3.31 and higher; OS/2) 
+Specifies the number of cached FCBs that can be opened at once. (Under DR-DOS, FCBS and FILES dynamically share the same internal buffer.)
+ FCBSHIGH (MS-DOS 7.0 and DR-DOS 7.02 and higher only) 
+Same as FCBS, but explicitly loads FCBs into upper memory.
+ FILENAME (PTS-DOS only) 
+Boot manager.
+ FILES (DOS 2.0 and DR DOS 3.31 and higher; OS/2) 
+Specifies the number of files that can be opened at once.
+ FILESHIGH (MS-DOS 7.0 and DR-DOS 7.02 and higher and FreeDOS only) 
+Same as FILES, but explicitly loads file handles into upper memory.
+ FORCE (PTS-DOS only) 
+Include execution of specified CONFIG.SYS subsections. See IGNORE.
+ GETKEY (DR DOS 6.0 and higher only) 
+Waits for key (or timeout) and sets error level to its ASCII code (or 1024 on timeout).
+ GOTO (DR DOS 5.0 and higher only) 
+Continues CONFIG.SYS processing at specified label.
+ GOSUB (DR DOS 6.0 and higher only) 
+Continues nested CONFIG.SYS processing at specified label, with RETURN returning to old location.
+ HIBUFFERS (DR DOS 6.0 and higher only) 
+See BUFFERSHIGH or DOS=HIGH,UMB or DOSDATA.
+ HIDEVICE (DR DOS 5.0 and higher only) 
+See DEVICEHIGH.
+ HIDOS (DR DOS 5.0 and higher only) 
+See DOS=HIGH,UMB.
+ HIFCBS (DR DOS 7.02 and higher, EDR-DOS 7.01.07 and DRMK only) 
+See FCBSHIGH or DOSDATA.
+ HIFILES (DR DOS 7.02 and higher, EDR-DOS 7.01.07 and DRMK only) 
+See FILESHIGH or DOSDATA.
+ HIINSTALL (DR DOS 5.0 and higher only) 
+See INSTALLHIGH.
+ HIINSTALLLAST (EDR-DOS 7.01.07 and DRMK only) 
+Installs a TSR program into memory, like HIINSTALL, but installs after the DOS data segment relocation.
+ HILASTDRIVE (DR-DOS 7.02 and higher, EDR-DOS 7.01.07 and DRMK only) 
+See LASTDRIVEHIGH or DOS=UMB or DOSDATA.
+ HISHELL (DR-DOS 7.02 and higher only) 
+See SHELLHIGH.
+ HISTACKS (DR-DOS 7.02 and higher, EDR-DOS 7.01.07 and DRMK only) 
+See STACKSHIGH or DOSDATA.
+ HISTORY (DR DOS 3.41 and higher only) 
+Enables and configures console and command line history buffer and extended pattern search functionality.
+ HMAREA (PTS-DOS only) 
+Specifies the address of the HMA segment.
+ IDLEHALT (FreeDOS only) 
+Configures HLT energy saving.
+ IDTCHK (PTS-DOS only) 
+Specifies if the system should check for boot sector viruses.
+ IFS (MS-DOS 4.00-4.01 only, ignored under DR-DOS 7.02 and higher; OS/2) 
+Loads installable file systems.
+ IGNORE (PTS-DOS only) 
+Exclude execution of specified CONFIG.SYS subsections. See FORCE.
+ IOPL (OS/2 only) 
+Specifies programs (which would normally run at the CPU's IOPL ring 3) which should be allowed to run at ring 2 in order to directly access the hardware for I/O.
+ INCLUDE (DOS 6.0 and higher, not DR-DOS, not FreeDOS) 
+Include directives from another menu block. (Can be emulated using GOSUB and RETURN under DR-DOS.)
+ INSERT (DR-DOS 7.02 and higher only) 
+Specifies whether the keyboard ⎀ Insert mode status is turned on or off.
+ INSTALL (DOS 4.0 and DR DOS 3.41 and higher) 
+Installs a TSR program into memory.
+ INSTALLHIGH (DOS 6.0 and DR DOS 6.0 and higher) 
+Installs a TSR program into upper memory. (Same as HIINSTALL in DR DOS 5.0.)
+ INSTALLLAST (EDR-DOS 7.01.07 and DRMK only) 
+Installs a TSR program into memory, like INSTALL, but installs after the DOS data segment relocation.
+ KEYBOARD (PTS-DOS only) 
+Specifies the keyboard layout.
+ KEYBUF (FreeDOS only) 
+Specifies the address of the relocated keyboard buffer.
+ LASTDRIVE (DOS 3.0 and DOS Plus 2.1 with FIDDLOAD and DR DOS 3.31 and higher; OS/2) 
+Specifies the maximum of drives that can be accessed.
+ LASTDRIVEHIGH (MS-DOS 7.0 and DR-DOS 7.02 and higher and FreeDOS only) 
+Same as LASTDRIVE, but explicitly loads the Current Directory Structure (CDS) into upper memory.
+ LIBPATH (OS/2 only) 
+Specifies a list of search paths for DLLs.
+ LOADFIX (PTS-DOS only) 
+Specifies how old programs should be handled.
+ LOCKS (PTS-DOS only) 
+Specifies number of file locks.
+ LOGO (MS-DOS 7.0 and higher and PTS-DOS only, ignored under DR-DOS 7.02 and higher) 
+Configures boot logo support under MS-DOS. Allows to display startup message in conjunction with PTS-DOS boot manager.
+ LPT1 (DR-DOS 7.02 and higher only) 
+Defines count and logical order and configures I/O address and timeout for LPT1: device.
+ LPT2 (DR-DOS 7.02 and higher only) 
+Defines count and logical order and configures I/O address and timeout for LPT2: device.
+ LPT3 (DR-DOS 7.02 and higher only) 
+Defines count and logical order and configures I/O address and timeout for LPT3: device.
+ LPT4 (some versions of DR-DOS 7.02 and higher only) 
+Enables, defines count and logical order and configures I/O address and timeout for LPT4: device.
+ MAXWAIT (OS/2 only) 
+Specifies time before a waiting process gets a higher priority.
+ MEMMAN (OS/2 only) 
+Configures memory allocation strategy
+ MEMORY (PTS-DOS only) 
+Specifies the default DOS memory allocation strategy.
+ MENU (FreeDOS only) 
+Defines menu options.
+ MENUCOLOR (DOS 6.0 and higher, not DR DOS, not FreeDOS) 
+Specifies menu colors. (Can be emulated using ECHO under DR-DOS.)
+ MENUDEFAULT (DOS 6.0 and higher and FreeDOS, not DR DOS) 
+Specifies the default menu block. (Can be emulated using TIMEOUT and SWITCH under DR-DOS.)
+ MENUITEM (DOS 6.0 and higher, not DR DOS, not FreeDOS) 
+Specifies a menu block. (Can be emulated using ECHO and SWITCH under DR-DOS.)
+ MULTITRACK (DOS 4.0 and DR-DOS 7.02 and higher; ignored under PTS-DOS) 
+Specifies whether multitrack disk operations are used or not.
+ NOCHAR (DR-DOS 7.02 and higher only) 
+Specifies the default No (N) character in Yes/No/Resume questions.
+ NUMLOCK (DOS 6.0 and Novell DOS 7 and higher) 
+Specifies whether the keyboard Num ⇩ status is turned on or off.
+ ONERROR (DR DOS 6.0 and higher only) 
+Conditional execution depending on last return code/error status only, f.e. ONERROR > 0 GOTO failload or ONERROR > 10 ONERROR <> 17 ONERROR <= 30 ECHO Error 11-16 or 18-30 occurred.
+ PAUSE (PTS-DOS only) 
+Similar to ECHO and GETKEY under DR-DOS, displays a text and waits for a key press.
+ PAUSEONERROR (OS/2 only) 
+Specifies if user must acknowledge errors in CONFIG.SYS.
+ PRINTMONBUFSIZE (OS/2 only) 
+Configures buffer size for LPT1, LPT2, LPT3.
+ PC (PTS-DOS only) 
+Conditional execution on PC-compatible machines only.
+ PRIORITY (OS/2 only) 
+Configures priority scheduler.
+ PRIORITY_DISK_IO (OS/2 only) 
+Configures priority of programs using disk I/O.
+ PRN (DR-DOS 7.02 and higher only)
+Changes internal default printer device driver (LPT1 to LPT3, or even LPT4) for PRN device.
+ PROTECTONLY (OS/2 only) 
+Specifies if DOS programs can be run or not.
+ PROTSHELL (OS/2 only) 
+Loads user interface.
+ PS1 (PTS-DOS only) 
+Conditional execution on PS/1-compatible machines only.
+ PS2 (PTS-DOS only) 
+Conditional execution on PS/2-compatible machines only.
+ QUIET (PTS-DOS and DRMK only) 
+Mutes display output send to STDOUT.
+ REIPL (OS/2 3.0 and higher only) 
+Specifies if system should reboot automatically on errors.
+ REM (DOS 4.0 and DR DOS 3.31 and higher; ignored under PTS-DOS) 
+Allows comments in CONFIG.SYS.
+ RESERVEDRIVELETTER (OS/2 3 FixPack 24 and higher only) 
+Specifies a drive letter not to be used up for local block device drivers.
+ RESUMECHAR (DR-DOS 7.02 and higher only)
+Specifies the default Resume (R) character in Yes/No/Resume queries.
+ RETURN (DR DOS 6.0 and higher only) 
+Returns nested CONFIG.SYS processing at previous location of GOSUB or SWITCH directive. An optional return code can be given, otherwise 0 is assumed.
+ RMSIZE (OS/2 only, ignored under DR-DOS 7.02 and higher) 
+Defines the real mode memory size.
+ RUN (OS/2 only) 
+Similar to CALL, loads programs in CONFIG.SYS. Similar to INSTALL under DOS and CALL under OS/2, but loads programs in background concurrenty.
+ SAVENAME (PTS-DOS only) 
+Specifies, if the first character of deleted files should be stored in the reserved area of directory entries in the FAT file system.
+ SCREEN (FreeDOS and PTS-DOS only) 
+Similar to VIDEOMODE under PTS-DOS, specifies the video mode to be used under FreeDOS. Under PTS-DOS, SCREEN does not specify the video mode but screen access methods.
+ SCROLLOCK (DR-DOS 7.02 and higher only) 
+Specifies whether the keyboard Scroll ⇩ status is turned on or off.
+ SET (DOS 6.0 and DR DOS 6.0 and higher; OS/2) 
+Sets environment variables.
+ SHELL (DOS 2.0 and DR DOS 3.31 and higher; OS/2) 
+Loads the command interpreter shell.
+ SHELLHIGH (DR-DOS 7.02 and higher and PTS-DOS and FreeDOS only) 
+Same as SHELL, but supports an additional SIZE parameter to define the size of the pre-allocation for COMMAND.COM to relocate its resident portion into the HMA (with /MH). Can be useful to avoid HMA fragmentation in conjunction with third-party shells which cannot load into the HMA. SHELLHIGH under PTS-DOS tries to load the shell into UMBs instead.
+ SHIFTSTATE (PTS-DOS only) 
+Specifies the state of the keyboard modifiers like Shift Lock, Num Lock, Scroll Lock or Insert mode.
+ SHUTDOWN (PTS-DOS only) 
+Specifies if files should be closed on ^ Ctrl+⎇ Alt+⌦ Del.
+ SOFTREBOOT (PTS-DOS only) 
+Specifies if POST should be skipped on reboots.
+ STACK (ignored under DR DOS 3.31-5.0 and 7.02 and higher only) 
+Compatibility dummy - DR DOS 3.31 - 6.0 were mostly reentrant and had a different stacks layout.
+ STACKS (DOS 3.2 and Novell DOS 7 and higher, ignored under DR DOS 6.0 and PTS-DOS) 
+Specifies the number of stacks for hardware interrupts.
+ STACKSHIGH (MS-DOS 7.0 and DR-DOS 7.02 and higher and FreeDOS only) 
+Same as STACKS, but explicitly loads buffers into upper memory.
+ STORAGE (PTS-DOS only) 
+Boot manager.
+ STRING (MS-DOS 3.0 only, ignored under DR-DOS 7.02 and higher) 
+Internal use.
+ STUBA20 (PTS-DOS only) 
+Specifies how XMS A20 gate control should work.
+ SUBMENU (DOS 6.0 and higher, not DR DOS, not FreeDOS) 
+Specifies a submenu block. (Can be emulated using CLS, ECHO and SWITCH under DR-DOS.)
+ SUPPRESSPOPUPS (OS/2 3.0 and higher only) 
+Specifies a drive where to log error information instead of displaying a textmode popup screen.
+ SWAPPATH (OS/2 only) 
+Specifies swap file path.
+ SWITCH (DR DOS 6.0 and higher only) 
+Conditionally continues nested CONFIG.SYS processing at one of the specified labels depending on keys pressed, with RETURN returning to old location.
+ SWITCHAR (DOS 2.0-2.1, DOS Plus 2.1 with FIDDLOAD, DR-DOS 7.02 and higher, PTS-DOS, FreeDOS and RxDOS only)
+Defines the default SwitChar used by the system (either '/' or '-').
+ SWITCHES (DOS 4.0 and Novell DOS 7 and higher; ignored under PTS-DOS) 
+Specifies special options.
+ SXFAKEHWFPU (OS/2 Warp 4 FixPak 1 (and higher) only) 
+Specifies if a fix for a FPU rounding bug should be activated or not.
+ SYSBOOT (PTS-DOS only) 
+Specifies file name of alternative DOS operating systems to boot.
+ SYSGEN (PTS-DOS only) 
+Configures the location of the various DOS parts in memory.
+ SYSLOAD (PTS-DOS only) 
+Load system from alternative disk area.
+ SYSTOUMB (PTS-DOS only) 
+Specifies if DOS data and code should be loaded into UMBs.
+ THREADS (OS/2 only) 
+Specifies number of concurrent threads.
+ TIMEOUT (DR DOS 6.0 and higher and PTS-DOS only) 
+Specifies the timeouts in CONFIG.SYS single-stepping and with SWITCH, GETKEY and ?, and the default answers for Yes/No queries and SWITCH selections. PTS-DOS only supports the timeout value.
+ TIMESLICE (OS/2 only) 
+Configures minimum and maximum time slices for scheduler.
+ TMPEXT (PTS-DOS only) 
+Specifies the file extension for temporary files.
+ TRACE (DR-DOS 7.02 and higher and PTS-DOS only; OS/2) 
+Globally or locally enables or disables CONFIG.SYS (and AUTOEXEC.BAT) single-stepping execution. The functionality under OS/2 differs significantly from that under DOS.
+ TRACEBUF (OS/2 only) 
+Specifies size of TRACE log buffer.
+ TRAPDUMP (OS/2 3.0 and higher only) 
+Logs detailed error information.
+ UMBSRV (PTS-DOS only) 
+Configures the UMB server used.
+ USERAM (PTS-DOS only) 
+Specifies the address ranges used as UMB RAM.
+ VERIFY (DR-DOS 7.02 and higher only) 
+Enables or disables disk write verification.
+ VERSION (FreeDOS and EDR-DOS 7.01.07 only) 
+Specifies the DOS version (and optionally the true DOS version) to be reported to programs.
+ VGASCREEN (PTS-DOS only) 
+Configures VGA display status.
+ VIDEOMODE (PTS-DOS only) 
+Similar to SCREEN under FreeDOS, specifies current video mode.
+ VIRTDMA (PTS-DOS only) 
+Specifies if virtual DMA can be used.
+ VME (OS/2 only) 
+Specifies if "Virtual mode extension (VME)" should be deactivated or not.
+ VXD (PTS-DOS only) 
+Configures VxD driver for Windows.
+ WINDOWS (PTS-DOS only) 
+Configures system support for Windows.
+ XBDA (EDR-DOS 7.01.07 and DRMK only) 
+Configures the relocation of the Extended BIOS data area (XBDA)
+ XT (PTS-DOS only) 
+Conditional execution on XT-compatible machines only.
+ YEAR2000 (DR-DOS 7.02 and higher only) 
+Configures the built-in Year 2000 support.
+ YESCHAR (PalmDOS 1.0, DR DOS 6.0 updates and Novell DOS 7 and higher only) 
+Specifies the default Yes (Y) character in Yes/No/Resume queries.
+ ZOMBIEDRV (PTS-DOS only) 
+Configures deletion tracking.
+
+
+== Examples ==
+Example CONFIG.SYS for MS-DOS 5 or higher:
+
+The first line causes DOS to use the high memory area and upper memory when possible, freeing up more conventional memory for applications to use.
+The second line loads the HIMEM.SYS driver that enables DOS to use the high memory area.
+The third line loads the EMM386 memory manager, which emulates expanded memory. The command line argument RAM allows the use of the upper memory area. Another argument that can be given to EMM386.EXE is NOEMS, which allows use of the upper memory area without emulating expanded memory. The NOEMS switch also frees up more upper memory blocks.
+The fourth line loads the ANSI.SYS device driver into the upper memory area.
+The fifth lines sets the maximum numbers of files that can be opened to 30.
+The last line sets the shell to the default shell, COMMAND.COM, and starts it with C:\DOS as the working directory, with an environment size of 512 bytes, and the /P indicates that it is the primary process and therefore cannot be shut down by using the EXIT command.
+As of MS-DOS version 6.0, an optional DOS boot menu was configurable. With this, the user could configure any number of boot configurations and choose one on start-up. This was of great use because various DOS applications preferred different settings for optimal functionality.
+Example CONFIG.SYS with MS-DOS 6.0 boot menu:
+
+The layout of the DOS boot menu is fairly self-explanatory. The [MENU] section defines menu entries. The option, MENUDEFAULT, allows a default choice with a countdown timer before it starts up (10 seconds here). The [COMMON] area holds lines that will start for every menu choice, while the later [WIN] and [XMS] areas are specific to each configuration.
+The later boot file, AUTOEXEC.BAT, would receive the chosen selection through a special %CONFIG% environment variable and thereby could branch into separately configured areas within this batch file as well.
+More features of CONFIG.SYS menu are described here:
+http://dos.rsvs.net/DOSPAGE/CONFMENU.HTM
+In general, .SYS-type files are loaded in CONFIG.SYS, as above, and .EXE programs such as the version of the caching software SMARTDRV provided by Microsoft with MS-DOS 6.x, or LBACACHE of FreeDOS, are loaded in the AUTOEXEC.BAT file. However, there are ways to load device drivers dynamically from the command line (with DEVLOAD or DYNALOAD) as well as program files during CONFIG.SYS processing (with INSTALL, INSTALLHIGH, or HIINSTALL directives).
+
+
+== Issues ==
+The system can still boot if these files are missing or corrupted. However, these two files are essential for the complete bootup process to occur with the DOS operating system. They contain information that is used to customize the operating system for personal use. They also contain the requirements of different software application packages. A DOS system would require troubleshooting if either of these files became damaged or corrupted.
+If CONFIG.SYS does not contain a SHELL directive (or the file is corrupt or missing), DOS typically searches for COMMAND.COM in the root directory of the boot drive. If this is not found, versions of DOS before 6.0 will not start up. MS-DOS 6.0/PC DOS 6.1 and Novell DOS 7 and higher will instead display a prompt to enter the path and filename of a command processor. This recovery prompt is also displayed when the primary command processor is aborted due to faults or if it is exited deliberately. (In the case of COMMAND.COM, the internal EXIT command is disabled only when the shell was started with /P.) This also provides limited means to replace the shell without having to reboot the system. Since the MS-DOS 7.0 and higher COMMAND.COM executable is incompatible with DR-DOS, but typically resides in the root of drive C: in dual-boot scenarios with DR-DOS, DR-DOS 7.02 and higher no longer allow to bypass SHELL directives in (^ Ctrl+)F5/F7/F8 "skip"/"trace"/"step" modes. (Some later issues added (^ Ctrl+)F6 to reinvoke the former F5 "skip" behaviour in order to allow recovery from problems with invalid SHELL arguments as well.) Also, if no SHELL directive could be found when skipping CONFIG.SYS processing via (^ Ctrl+)F5 (and also with (^ Ctrl+)F7/F8, when the default file extension has been changed with SYS /DR:ext), the user is prompted to enter a valid shell file name before trying to load COMMAND.COM from the root. Pressing ⌅ Enter without specifying a file will assume the former default.
+Depending on the version, the size of the CONFIG.SYS file is limited to a few kilobytes under MS-DOS/PC DOS (up to 64 KB in most recent versions), whereas the file's size is unlimited under DR-DOS. This is because the former operating systems will compile the file into some tokenized in-memory representation before they sort and regroup the directives to be processed in a specific order (with device drivers always being loaded before TSRs), whereas DR-DOS interprets the file and executes most directives line-by-line, thereby giving full control over the load order of drivers and TSRs via DEVICE and INSTALL (for example to solve load order conflicts or to load a program debugger before a device driver to be debugged) and allowing to adapt the user interaction and change the flow through the file based on conditions like processor types installed, any type of keys pressed, load or input errors occurring, or return codes given by loaded software. This becomes particularly useful since INSTALL can also be used to run non-resident software under DR-DOS, so that temporary external programs can be integrated into the CONFIG.SYS control flow.
+In MS-DOS/PC DOS 2.0 through 4.01, the length of the SHELL line was limited to 31 characters, whereas up to 128 characters are possible in later versions. DR-DOS even accepts up to 255 characters. CONFIG.SYS directives do not accept long file names.
+
+
+== Dual booting DOS and Windows 9x ==
+When installing Windows 95 over a preexisting DOS/Windows install, CONFIG.SYS and AUTOEXEC.BAT are renamed to CONFIG.DOS and AUTOEXEC.DOS. This is intended to ease dual booting between Windows 9x and DOS. When booting into DOS, they are temporarily renamed CONFIG.SYS and AUTOEXEC.BAT. Backups of the Windows 95 versions are made as CONFIG.W40 and AUTOEXEC.W40 files.
+When Caldera DR-DOS 7.02/7.03 is installed on a system already containing Windows 95, Windows' CONFIG.SYS and AUTOEXEC.BAT retain those names. DR-DOS' startup files are installed as DCONFIG.SYS (a name already used in earlier versions of DR DOS) and AUTODOS7.BAT.
+
+
+== OS/2 / NT ==
+OS/2 uses the CONFIG.SYS file extensively for setting up its configuration, drivers and environment before the graphical part of the system loads.
+In the OS/2 subsystem of Windows NT, what appeared as CONFIG.SYS to OS/2 programs was actually stored in the registry.
+There are many undocumented or poorly documented CONFIG.SYS directives used by OS/2.
+
+
+== See also ==
+DOS
+IBMBIO.COM
+IBMDOS.COM
+IO.SYS
+MSDOS.SYS
+COMMAND.COM
+AUTOEXEC.BAT
+List of DOS commands
+
+
+== References ==
+^ a b c Matthias Paul (1997-07-30). "NWDOS-TIPs — Tips & Tricks rund um Novell DOS 7, mit Blick auf undokumentierte Details, Bugs und Workarounds". MPDOSTIP (e-book) (in German) (edition 3, release 157 ed.). Retrieved 2012-01-11.  NWDOSTIP.TXT is a comprehensive work on Novell DOS 7 and OpenDOS 7.01, including the description of many undocumented features and internals. It is part of the author's yet larger MPDOSTIP.ZIP collection maintained up to 2001 and distributed on many sites at the time. The provided link points to a HTML-converted older version of the NWDOSTIP.TXT file.
+^ a b Caldera, Inc. (1998). DR-DOS 7.02 User Guide. 1998. ([1]).
+^ a b Matthias Paul (2001-04-09). "NWDOS-TIPs — Tips & Tricks rund um Novell DOS 7, mit Blick auf undokumentierte Details, Bugs und Workarounds". MPDOSTIP (e-book) (in German) (edition 3, release 183 ed.). 
+^ Poarch, Mad (April 1993). "Booting Multiple Operating Systems with the DR Multiuser DOS LOADER Utility". Volume 5, Number 4. Novell. Archived from the original on 2012-03-22. Retrieved 2013-06-28. 
+^ Understanding the Settings in the Windows Millennium Edition Config.sys File
+^ Microsoft (2006-11-15). Windows 95 CD-ROM CONFIG.TXT File Article 135481, Revision: 1.1, retrieved 2011-12-22: "For each hard disk, specifies whether to record the date that files are last accessed. Last access dates are turned off for all drives when your computer is started in safe mode, and are not maintained for floppy disks by default. Syntax: ACCDATE=drive1+|- [drive2+|-]..."
+^ "CONFIG.SYS statements used by OS/2". REXX Tips & Tricks, Version 2.80. Retrieved 17 January 2009. 
+
+
+== External links ==
+Information about the AUTOEXEC.BAT and the CONFIG.SYS
+Description of Windows 98 / MS-DOS 7.10 CONFIG.SYS directives
+Description of DR-DOS 7 CONFIG.SYS directives (incomplete)
+Description of FreeDOS CONFIG.SYS directives
+PTS-DOS 2000 Pro User Manual including a description of PTS-DOS CONFIG.SYS directives (incomplete)
+Inoffizielle deutschsprachige PTS-DOS-FAQ (PTS/FAQD), inofficial German PTS-DOS FAQ as of 2004-04-25, including more CONFIG.SYS directives
+18 Tracks :: 18 Tracks is an album by Bruce Springsteen, released in 1999. All but three selections had been on the boxed set Tracks, released a half year before. This single album was intended to capture more casual fans[citation needed], and thus was oriented towards the shorter, more pop-oriented selections from Springsteen's vault.
+"The Promise", a Darkness on the Edge of Town outtake that gained considerable reputation as Springsteen's ultimate tale of betrayal following live performances beginning in 1976 and even more so in 1978, was included in a newly recorded version among the three new numbers after howls of outrage from the faithful for leaving it off Tracks. "The Fever" had been recorded in 1973 but never seriously considered for inclusion on an album; instead, it became familiar to progressive rock radio listeners as manager Mike Appel released it to such stations in 1974 and it became an underground hit. It was also recorded by Southside Johnny and the Asbury Jukes. Obscure early-1990s Human Touch outtake "Trouble River" was the third "new old" cut.
+Commercial goals for the album were not met[citation needed], as it only reached #64 on the Billboard 200 album chart and became his first album not to receive a RIAA certification. It did modestly better on the UK charts.
+In 2000, "The Promise" was nominated for (but did not win) two Grammy Awards: Best Rock Song and Best Male Rock Vocal Performance.
+
+
+== Track listing ==
+"Growin' Up" – 2:38
+"Seaside Bar Song" – 3:33
+"Rendezvous" – 2:48
+"Hearts of Stone" – 4:29
+"Where the Bands Are" – 3:43
+"Loose Ends" – 4:00
+"I Wanna Be With You" – 3:21
+"Born in the U.S.A." (Demo Version) – 3:10
+"My Love Will Not Let You Down" – 4:24
+"Lion's Den" – 2:18
+"Pink Cadillac" – 3:33
+"Janey, Don't You Lose Heart" – 3:24
+"Sad Eyes" – 3:47
+"Part Man, Part Monkey" – 4:28
+"Trouble River" – 4:18
+Recorded April 1990 ("Human Touch" Outtake)
+
+"Brothers Under the Bridge" – 4:55
+"The Fever" – 7:35
+Recorded May 1973
+
+"The Promise" – 4:48
+Recorded February 1999
+
+
+== References ==
+914 Sound Studios :: 914 Sound Studios was a recording studio in Blauvelt, New York during the 1970s. Some of the artists who recorded tracks and albums in the studio were Bruce Springsteen, Dusty Springfield, Ramones, Janis Ian, Blood, Sweat & Tears and Melanie. It was named after telephone area code 914 which had, until the year 2000, served as the area code for Rockland County where the studio was located.
+
+
+== History ==
+914 Sound Studios was created by Brooks Arthur (Brooklyn-born Arnold Brodsky), a well-known sound engineer at the time, who lived in Rockland County. The 914 Studios was 20 minutes north of New York City and 5 minutes up north from the state border with New Jersey. Arthur later explained its genesis: “I was living in Valley Cottage, New York which is down Route 303 from Blauvelt, back in 1971, and I thought it would be a great idea to have a workshop where artists and producers could hang out for a week at a time, relax and build a record at affordable rates. New York City by-the-hour pricing was already getting expensive, and I envisioned a place where artists like Janis, Dusty Springfield and, later, Bruce would be able to roost for a while and create an album. We built a football field behind the studio and the great Blauvelt Diner was within walking distance. Bruce loved that place!"
+Bruce Springsteen began recording at 914 Sound Studios once he signed his first record deal, with Columbia Records in 1972. Manager and producer Mike Appel chose it in order to economize in using the $25,000 advance they had been given; he saw it as "a top-notch facility" that allowed "high quality at reasonable rates" due to its out-of-the-way location. Recordings made at the studio during 1972 would make their way onto Springsteen's debut album Greetings from Asbury Park, N.J. and would also be used as demos for Appel's publishing company, Laurel Canyon Music Publishing. Some of these demos would later appear as radio-only releases ("The Fever") or on his late 1990s Tracks box set, or on innumerable bootleg recordings. All of Springsteen's second album, The Wild, the Innocent & the E Street Shuffle, was recorded at 914 Sound in 1973. Still short on money, some members of Springsteen's E Street Band slept in a tent in back of the studio rather than rent a hotel room or drive back and forth to the Jersey Shore. The membership of the band even changed temporarily due to the studio; Louis Lahav, the studio's resident sound engineer, provided the link whereby violinist and vocalist Suki Lahav became an E Streeter for six months.
+The first song for Springsteen's next album, the classic "Born to Run", was also recorded at 914 Sound in 1974. A New Jersey fan and a personal friend of Springsteen at the time, Barry Rebo (who later became the chairman of Emerging Pictures, a national network of digital cinema theaters), used his black-and-white Super-8 film camera to record Springsteen at the 914 Sound Studio. Springsteen labored there for months, between playing club dates, over the four-and-a-half minutes of "Born to Run". Then new producer and future Springsteen manager Jon Landau entered the scene; he described 914 Sound as a "beat-up old funky studio" where, among other things, the piano, which was at the core of the songs, would not stay in tune. Landau also felt that the studio owners had not invested in the most up-to-date equipment and that the sound of the studio was dull. So among the changes he made was to move recording of the remainder of the Born to Run album to The Record Plant in New York City.
+Dusty Springfield recorded the songs for her intended-to-be 1974 album Longing at the studio, with Brooks Arthur producing, but for various reasons the album was abandoned. The Ramones recorded tracks in 1975 at the studio for an alleged 1975 East Berlin EP, Judy's In The Basement - The 914 Sessions. Janis Ian teamed up with Brooks Arthur for three albums recorded at 914 Sound, including 1975's number-one Between the Lines, containing her hit "At Seventeen". Between the Lines was the final project at 914 that Arthur worked on.
+
+
+== References ==
+Born to Run :: Born to Run is the third album by the American singer-songwriter Bruce Springsteen. It was released on August 25, 1975 through Columbia Records.
+Representing Springsteen's effort to break into the mainstream, Born to Run was a critical and commercial success. It peaked at number three on the Billboard 200, eventually selling six million copies in the US by the year 2000. Two singles were released from the album: "Born to Run" and "Tenth Avenue Freeze-Out"; the first helped Springsteen to reach mainstream popularity. The tracks "Thunder Road" and "Jungleland" became staples of album-oriented rock radio and Springsteen concert high points.
+Born to Run garnered widespread critical acclaim. Praise centred on its production quality and Springsteen's songwriting, which focuses on the coming of age of average teenagers and young adults in New Jersey and New York City. Often regarded as Springsteen's best release, Born to Run is frequently cited as one of the greatest albums of all time and was ranked at number 18 on Rolling Stone's list of the 500 Greatest Albums of All Time in 2003.
+On November 14, 2005, a "30th Anniversary" remaster of the album was released as a box set including two DVDs: a production diary film and a concert movie.
+
+
+== History ==
+Springsteen began work on the album in May 1974. Given an enormous budget in a last-ditch effort at a commercially viable record, Springsteen became bogged down in the recording process while striving for a wall of sound production.[citation needed] But, fed by the release of an early mix of "Born to Run" to progressive rock radio, anticipation built toward the album's release.[citation needed]
+Springsteen has noted a progression in his songwriting compared to his previous work. Unlike Greetings from Asbury Park, N.J. and The Wild, the Innocent and the E Street Shuffle, Born to Run includes few specific references to places in New Jersey, in an attempt to make the songs more identifiable to a wider audience. Springsteen has also referred to a maturation in his lyrics, calling Born to Run "the album where I left behind my adolescent definitions of love and freedom—it was the dividing line." In addition, Springsteen spent more time in the studio refining songs than he had on the previous two albums.[citation needed] All in all, the album took more than 14 months to record, with six months alone spent on the song "Born to Run" itself. During this time Springsteen battled with anger and frustration over the album, saying he heard "sounds in [his] head" that he could not explain to the others in the studio.[citation needed] During the process, Springsteen brought in Jon Landau to help with production. This was the beginning of the breakup of Springsteen's relationship with producer and manager Mike Appel, after which Landau assumed both roles. The album was Springsteen's first to feature pianist Roy Bittan and drummer Max Weinberg (although David Sancious and Ernest "Boom" Carter played the piano and drums, respectively, on the title track).
+The album is noted for its use of introductions to set the tone of each song (all of the record was composed on piano, not guitar), and for the Phil Spector-like "Wall of Sound" arrangements and production. Indeed, Springsteen has said that he wanted Born to Run to sound like "Roy Orbison singing Bob Dylan, produced by Spector." Most of the tracks were first recorded with a core rhythm section band comprising Springsteen, Weinberg, Bittan, and bassist Garry Tallent, with other members' contributions then added on.
+In terms of the original LP's sequencing, Springsteen eventually adopted a "four corners" approach, as the songs beginning each side ("Thunder Road", "Born to Run") were uplifting odes to escape, while the songs ending each side ("Backstreets", "Jungleland") were sad epics of loss, betrayal, and defeat. (Originally, he had planned to begin and end the album with alternative versions of "Thunder Road".)[citation needed]
+Also, original pressings have "Meeting Across the River" billed as "The Heist". The original album cover has the title printed in a graffiti style font. These copies, known as the "script cover," are very rare and considered to be the "holy grail" for Springsteen collectors.[citation needed]
+
+
+== Release and reception ==
+The album's release was accompanied by a $250,000 promotional campaign by Columbia directed at both consumers and the music industry, making good use of Landau's "I saw rock 'n' roll's future—and its name is Bruce Springsteen" quote. With much publicity, Born to Run vaulted into the top 10 in its second week on the charts and soon went Gold. Time and Newsweek magazines put Springsteen on the cover in the same week (October 27, 1975) – in Time, Jay Cocks praised Springsteen, while the Newsweek article took a cynical look at the "next Dylan" hype that haunted Springsteen until his breakthrough. The question of hype became a story in itself as critics began wondering if Springsteen was for real or the product of record company promotion.
+Upset with Columbia's promotion department, Springsteen said the decision to label him as the "future of rock was a very big mistake and I would like to strangle the guy who thought that up." When Springsteen arrived for his first UK concert at the Hammersmith Odeon, he personally tore down the "Finally the world is ready for Bruce Springsteen" posters in the lobby and ordered that the buttons with "I have seen the future of rock 'n' roll at the Hammersmith Odeon" printed on them not be given out. Now fearing the hype might backfire, Columbia suspended all press interviews with Springsteen.[citation needed] When the hype died down, sales tapered off and the album was off the chart after 29 weeks. But the album had established a solid national fan base for Springsteen which he would build on with each subsequent release.[citation needed]
+The album debuted on the Billboard album chart on September 13, 1975 at #84. The following week it made an impressive increase entering the top 10 at #8, then spent two weeks at #4, and finally, during the weeks of October 11 and October 18, Born to Run reached its peak position of #3.[citation needed] Born to Run continued to be a strong catalog seller through the years, re-entering the Billboard chart in late 1980 after The River was released, and again after the blockbuster success of Born in the U.S.A., spending most of 1985 on the chart. It was certified triple-platinum by the Recording Industry Association of America in 1986, the first year in which pre-1976 releases were eligible for platinum and multi-platinum awards.
+In 1987, Born to Run was ranked #8 by Rolling Stone in its "100 Best Albums of the Last Twenty Years" and in 2003, in its "The 500 Greatest Albums of All Time" ranked Born to Run at number 18. In 2001, the TV network VH1 named it the 27th-greatest album of all time, and in 2003, it was ranked as the most popular album in the first Zagat Survey Music Guide. Born to Run is listed in the Library of Congress' National Recording Registry of historic recordings.
+In December 2005, U.S. Representative Frank Pallone (who represents Asbury Park) and 21 co-sponsors sponsored H.Res. 628, "Congratulating Bruce Springsteen of New Jersey on the 30th anniversary of his masterpiece record album 'Born to Run', and commending him on a career that has touched the lives of millions of Americans." In general, resolutions honoring native sons are passed with a simple voice vote. This bill, however, was referred to the House Committee on Education and the Workforce and died there.
+
+
+== Live performance ==
+Songs from Born to Run were performed live as early as mid-1974, and by 1975, all had made their way into Springsteen's shows and (with the rare exception of "Meeting Across the River") continued to be a regular staple of his concerts on subsequent tours through 2009.[citation needed] Springsteen and the E Street Band performed Born to Run in its entirety and in order for the first time at a benefit performance at the Count Basie Theatre in Red Bank, New Jersey, on May 7, 2008.[citation needed] It was again performed during their September 20, 2009, show at the United Center in Chicago, Illinois, as well as several other shows on the fall 2009 leg of the Working on a Dream Tour.[citation needed] During the 2013 spring-summer run of his Wrecking Ball Tour, Springsteen again began to perform the album in its entirety although a few times its performance was not included in the actual set lists and it was performed as either a surprise or request.[citation needed]
+On June 20, 2013, the full album was performed at the Ricoh Arena the home of Coventry City F.C. in Coventry, England and dedicated to the memory of actor James Gandolfini, who died of a heart attack the previous day.
+
+
+== Album cover ==
+
+The cover art of Born to Run is one of rock music's most popular and iconic images. It was taken by Eric Meola, who shot 900 frames in his three-hour session. These photos have been compiled in Born to Run: The Unseen Photos.
+The photo shows Springsteen holding a Fender Telecaster with an Esquire neck, while leaning against saxophonist Clarence Clemons. That image became famous as the cover art. "Other things happened," says Meola, "but when we saw the contact sheets, that one just sort of popped. Instantly, we knew that was the shot." Ultra-thin lettering graced the mass-produced version: an unusual touch then; a design classic since.
+During the Born to Run tours, Springsteen and Clemons would occasionally duplicate the pose onstage for several seconds after a song while the stage lights were dim.[citation needed] As soon as the audience would recognize and respond to what they were doing, they immediately broke the pose.[citation needed]
+The Springsteen and Clemons cover pose has been imitated often, from Cheap Trick on the album Next Position Please, to Tom and Ray Magliozzi on the cover of the Car Talk compilation Born Not to Run: More Disrespectful Car Songs, to Kevin & Kell on a Sunday strip entitled "Born to Migrate" featuring Kevin Dewclaw as Bruce with a carrot and Kell Dewclaw as Clarence with a pile of bones, to Bert and the Cookie Monster on the cover of the Sesame Street album Born to Add. It has also been used as the cover art for Frank Turner's cover of Thunder Road.[citation needed]
+
+
+== 30th Anniversary Edition ==
+On November 14, 2005, Columbia Records released Born to Run 30th Anniversary Edition in box set form. The package included a remastered CD version of the original album – the CD is all black (including playback side) with the label side replicating the original vinyl disc having four bands (the original LP had four tracks per side) and including a modified red Columbia label listing all 8 tracks. The DVD Wings For Wheels, a lengthy documentary on the making of the album, which later won the 2007 Grammy Award for Best Long Form Music Video, with bonus film of three songs recorded live on May 1, 1973 at the Ahmanson Theater in Los Angeles. The DVD Bruce Springsteen & The E Street Band Hammersmith Odeon, London '75, a full-length concert film recorded on November 18, 1975 at the Hammersmith Odeon in London during the brief European portion of their Born to Run tours, this live recording was subsequently released as the CD Hammersmith Odeon London '75. Packages from retailer Best Buy also included a CD single replica of the original "Born to Run" 45 single.
+The box set debuted on the Billboard 200 album chart on December 3, 2005 at number 18 with sales of 53,206 copies.
+
+
+== Track listing ==
+All songs written and composed by Bruce Springsteen. 
+
+
+== Personnel ==
+
+
+=== The E Street Band ===
+Bruce Springsteen – lead vocals, lead and rhythm guitars, harmonica, percussion
+Roy Bittan – piano, Fender Rhodes, organ, harpsichord, glockenspiel, background vocals on all tracks except "Born to Run"
+Clarence Clemons – saxophones, tambourine, background vocals
+Danny Federici – organ and glockenspiel on "Born to Run"
+Garry W. Tallent – bass guitar
+Max Weinberg – drums on all tracks except "Born to Run"
+Ernest "Boom" Carter – drums on "Born to Run"
+Suki Lahav - violin on "Jungleland"
+David Sancious – piano, organ on "Born to Run"
+Steven Van Zandt – background vocals on "Thunder Road", horn arrangements
+
+
+=== Additional musicians ===
+Wayne Andre – trombone
+Mike Appel – background vocals
+Michael Brecker – tenor saxophone
+Randy Brecker – trumpet, flugelhorn
+Richard Davis – double bass on "Meeting Across The River"
+David Sanborn – baritone saxophone
+
+
+=== Production ===
+Bruce Springsteen, Jon Landau, and Mike Appel - record producers (except "Born To Run", produced by Springsteen and Appel)
+John Berg – album design
+Greg Calbi – mastering
+Charles Calello – conductor, string arrangements
+Andy Engel – album design
+Bob Ludwig – remastering
+Eric Meola – photography
+
+
+=== Engineers ===
+Andy Abrams
+Angie Arcuri
+Ricky Delena
+Jimmy Iovine
+Louis Lahav
+Thom Panunzio
+Corky Stasiak
+David Thoener
+
+
+== Chart positions ==
+
+
+=== Album ===
+
+
+=== Singles ===
+
+
+== References ==
+
+
+== External links ==
+Born to Run (Adobe Flash) at Radio3Net (streamed copy where licensed)
+Album lyrics and audio samples
+Collection of album reviews
+Born To Run Photographs
+Alan Rich :: Alan Rich (June 17, 1924 – April 23, 2010) was an American music critic who served on the staff of many newspapers and magazines on both coasts. Originally from Brookline, Massachusetts, he first studied medicine at Harvard University before turning to music. While a student at Harvard he began his career as critic, working as assistant music critic at the Boston Herald.
+He was music director of KPFA, the Berkeley radio station, and successively a music critic for publications including The New York Times, the New York Herald Tribune, New York magazine, Newsweek, California magazine, the Los Angeles Herald-Examiner, Opera News, and from 1992 to 2008 LA Weekly magazine. He subsequently worked briefly as music critic for Bloomberg News.
+Rich also wrote a number of books including So I've Heard: Notes of a Migratory Music Critic, published in 2006.
+
+
+== References ==
+
+
+== External links ==
+Alan Rich's website
+Alan Rich Obituary, Guardian [London]
+Bruce Springsteen :: Bruce Frederick Joseph Springsteen (born September 23, 1949) is an American musician and singer-songwriter. He is best known for his work with the E Street Band. Nicknamed "The Boss", Springsteen is widely known for his brand of poetic lyrics, Americana working class, sometimes political sentiments centered on his native New Jersey and his lengthy and energetic stage performances, with concerts from the 1970s to the present decade running over three hours in length.
+Springsteen's recordings have included both commercially accessible rock albums and more somber folk-oriented works. His most successful studio albums, Born in the U.S.A. and Born to Run, showcase a talent for finding grandeur in the struggles of daily American life; he has sold more than 64 million albums in the United States making him the fifteenth highest selling artist of all-time and more than 120 million albums worldwide. Springsteen has earned numerous awards for his work, including 20 Grammy Awards, two Golden Globes and an Academy Award as well as being inducted into the Rock and Roll Hall of Fame and the Songwriters Hall of Fame in 1999.
+
+
+== Early life ==
+Springsteen was born on September 23, 1949 in Long Branch, New Jersey, and spent his childhood and high school years in Freehold Borough. He lived on South Street in Freehold Borough and attended Freehold Borough High School. His father, Douglas Frederick Springsteen, was of Dutch and Irish ancestry (his surname in Dutch means jumping stone) and worked as a bus driver, among other vocations, although he was mostly unemployed, and according to Springsteen's account, his mother was the main breadwinner. His mother, Adele Ann (née Zerilli), was a legal secretary and was of Italian ancestry. His maternal grandfather was born in Vico Equense, a town near Naples. He has two younger sisters, Virginia and Pamela. Pamela had a brief film career, but left acting to pursue still photography full-time; she took photos for his Human Touch, Lucky Town and The Ghost of Tom Joad albums.
+Raised a Roman Catholic, Springsteen attended the St. Rose of Lima Catholic school in Freehold Borough, where he was at odds with the nuns and rejected the strictures imposed upon him, even though some of his later music reflects a Catholic ethos and included a few rock-influenced, traditional Irish-Catholic hymns. In a 2012 interview, he explained that it was his Catholic upbringing rather than political ideology that most influenced his music. He noted in the interview that his faith had given him a "very active spiritual life," although he joked that this "made it very difficult sexually." He added: "Once a Catholic, always a Catholic."
+In ninth grade, he transferred to the public Freehold Regional High School, but did not fit in there either. Former teachers have said he was a "loner, who wanted nothing more than to play his guitar." He completed high school, but felt so uncomfortable that he skipped his own graduation ceremony. He briefly attended Ocean County College, but dropped out.
+
+
+== Career ==
+
+
+=== 1964–1972: Early years ===
+
+Springsteen had been inspired to take up music at the age of seven after seeing Elvis Presley on The Ed Sullivan Show in 1956. At 13, his mother bought him his first guitar for $18. The next year, in 1964, a major turning point for Springsteen occurred with the Beatles' appearance on The Ed Sullivan Show. Thereafter he started playing for audiences, first at a trailer park on New Jersey Route 34 and then at a local Elks Lodge. In 1965, Springsteen's mother took out a loan to buy her 16-year-old son a $60 Kent guitar, an act he subsequently memorialized in his song "The Wish".
+In the same year, he went to the house of Tex and Marion Vinyard, who sponsored young bands in town. They helped him become the lead guitarist and subsequently the lead singer of The Castiles. The Castiles recorded two original songs at a public recording studio in Brick Township and played a variety of venues, including Cafe Wha? in Greenwich Village. Marion Vinyard said that she believed the young Springsteen when he promised he would make it big.
+Called for induction when he was 18, Springsteen failed his physical examination and did not serve in Vietnam. In an interview in Rolling Stone magazine in 1984, he said, "When I got on the bus to go take my physical, I thought one thing: I ain't goin'." He had suffered a concussion in a motorcycle accident when he was 17, and this together with his "crazy" behavior at induction and not taking the tests was enough to get him a 4F.
+In the late 1960s, Springsteen performed briefly in a power trio known as Earth, playing in clubs in New Jersey. Springsteen acquired the nickname "The Boss" during this period as when he played club gigs with a band he took on the task of collecting the band's nightly pay and distributing it amongst his bandmates. Springsteen is not fond of this nickname, due to his dislike of bosses, but seems to have since given it a tacit acceptance. Previously he had the nickname "Doctor".
+
+From 1969 through early 1971, Springsteen performed with Steel Mill, which also featured Danny Federici, Vini Lopez, Vinnie Roslin and later Steve Van Zandt and Robbin Thompson. They went on to play the mid-Atlantic college circuit, and also briefly in California. In January 1970 well-known San Francisco Examiner music critic Philip Elwood gave Springsteen credibility in his glowing assessment of Steel Mill: "I have never been so overwhelmed by totally unknown talent." Elwood went on to praise their "cohesive musicality" and, in particular, singled out Springsteen as "a most impressive composer". During this time Springsteen also performed regularly at small clubs in Canton, Massachusetts; Richmond, Virginia; and Asbury Park and other points along the Jersey Shore, quickly gathering a cult following.
+Other acts followed over the next two years, as Springsteen sought to shape a unique and genuine musical and lyrical style: Dr. Zoom & the Sonic Boom (early- to mid-1971), Sundance Blues Band (mid-1971), and the Bruce Springsteen Band (mid-1971 to mid-1972). With the addition of pianist David Sancious, the core of what would later become the E Street Band was formed, with occasional temporary additions such as horn sections, "The Zoomettes" (a group of female backing vocalists for "Dr. Zoom") and Southside Johnny Lyon on harmonica. Musical genres explored included blues, R&B, jazz, church music, early rock 'n' roll, and soul. His prolific songwriting ability, with "More words in some individual songs than other artists had in whole albums", as his future record label would describe it in early publicity campaigns, brought his skill to the attention of several people who were about to change his life: new managers Mike Appel and Jim Cretecos, and Columbia Records talent scout John Hammond, who, under Appel's pressure, auditioned Springsteen in May 1972.
+Even after Springsteen gained international acclaim, his New Jersey roots showed through in his music, and he often praised "the great state of New Jersey" in his live shows. Drawing on his extensive local appeal, he routinely sold out consecutive nights in major New Jersey, Philadelphia and New York venues. He also made many surprise appearances at The Stone Pony and other shore nightclubs over the years, becoming the foremost exponent of the Jersey Shore sound.
+
+
+=== 1972–1974: Initial struggle for success ===
+Springsteen signed a record deal with Columbia Records in 1972 with the help of John Hammond, who had signed Bob Dylan to the same label a decade earlier. Springsteen brought many of his New Jersey–based colleagues into the studio with him, thus forming the E Street Band (although it would not be formally named as such for several more years). His debut album Greetings from Asbury Park, N.J., released in January 1973, established him as a critical favorite though sales were slow.
+Because of Springsteen's lyrical poeticism and folk rock–rooted music exemplified on tracks like "Blinded by the Light" and "For You", as well as the Columbia and Hammond connections, critics initially compared Springsteen to Bob Dylan. "He sings with a freshness and urgency I haven't heard since I was rocked by 'Like a Rolling Stone'" wrote Crawdaddy magazine editor Peter Knobler in Springsteen's first interview/profile in March 1973. Photographs for that original profile were taken by photographer Ed Gallucci. Crawdaddy discovered Springsteen in the rock press and was his earliest champion. Knobler profiled him in Crawdaddy three times, in 1973, 1975 and 1978. (Springsteen and the E Street Band acknowledged by giving a private performance at the Crawdaddy 10th Anniversary Party in New York City in June 1976.) Music critic Lester Bangs wrote in Creem in 1975 that when Springsteen's first album was released "... many of us dismissed it: he wrote like Bob Dylan and Van Morrison, sang like Van Morrison and Robbie Robertson, and led a band that sounded like Van Morrison's". The track "Spirit in the Night" especially showed Morrison's influence, while "Lost in the Flood" was the first of many portraits of Vietnam veterans, and "Growin' Up", his first take on the recurring theme of adolescence.
+In September 1973 his second album The Wild, the Innocent & the E Street Shuffle was released, again to critical acclaim but no commercial success. Springsteen's songs became grander in form and scope, with the E Street Band providing a less folky, more R&B vibe, and the lyrics often romanticized teenage street life. "4th of July, Asbury Park (Sandy)" and "Incident on 57th Street" would become fan favorites, and the long, rousing "Rosalita (Come Out Tonight)" continues to rank among Springsteen's most beloved concert numbers.
+In the May 22, 1974 issue of Boston's The Real Paper music critic Jon Landau wrote, after seeing a performance at the Harvard Square Theater, "I saw rock and roll future, and its name is Bruce Springsteen. And on a night when I needed to feel young, he made me feel like I was hearing music for the very first time." Landau subsequently became Springsteen's manager and producer, helping to finish the epic new album Born to Run. Given an enormous budget in a last-ditch effort at a commercially viable record, Springsteen became bogged down in the recording process while striving for a "Wall of Sound" production. But, fed by the release of an early mix of "Born to Run" to progressive rock radio, anticipation built toward the album's release.
+The album took more than 14 months to record, with six months alone spent on the song "Born To Run". During this time Springsteen battled with anger and frustration over the album, saying he heard "sounds in [his] head" that he could not explain to the others in the studio. It was during these recording sessions that "Miami" Steve Van Zandt would stumble into the studio just in time to help Springsteen organize the horn section on "Tenth Avenue Freeze-Out". Van Zandt, who would eventually join the E Street Band, had been a long-time friend of Springsteen, as well as a collaborator on earlier musical projects, and understood where he was coming from, which helped him to translate some of the sounds Springsteen was hearing. Still, by the end of the grueling recording sessions Springsteen was not satisfied, and upon first hearing the finished album, threw the record into the alley and told Jon Landau he would rather just cut the album live at The Bottom Line (a place he often played).
+
+
+=== 1975–1983: Breakthrough ===
+On August 13, 1975, Springsteen and the E Street Band began a five-night, 10-show stand at New York's Bottom Line club. The engagement attracted major media attention and was broadcast live on WNEW-FM. (Decades later, Rolling Stone magazine would name the stand as one of the 50 Moments That Changed Rock and Roll.) Oklahoma City rock radio station WKY, in association with Carson Attractions, staged an experimental promotional event that resulted in a sold out house at the (6000 seat) Civic Center Music Hall. With the release of Born to Run on August 25, 1975, Springsteen finally found success. The album peaked at No. 3 on the Billboard 200, and while reception at U.S. top 40 radio outlets for the album's two singles were not overwhelming ("Born to Run" reached a modest No. 23 on the Billboard charts, and "Tenth Avenue Freeze-Out" only hit #83), almost every track on the album received album-oriented rock airplay, especially "Born to Run", "Thunder Road", "Tenth Avenue Freeze-Out" and "Jungleland", all of which remain perennial favorites on many classic rock stations.
+With its panoramic imagery, thundering production and desperate optimism, Born to Run is considered to be among the best rock and roll albums of all time and Springsteen's finest work. Springsteen appeared on the covers of both Time and Newsweek in the same week, on October 27 of that year. So great did the wave of publicity become that Springsteen eventually rebelled against it during his first venture overseas, tearing down promotional posters before a concert appearance in London.
+A legal battle with former manager Mike Appel kept Springsteen out of the studio for nearly a year, during which time he kept the E Street Band together through extensive touring across the U.S. Despite the optimistic fervor with which he often performed, his new songs had taken a more somber tone than much of his previous work. Reaching settlement with Appel in 1977, Springsteen returned to the studio, and the subsequent sessions produced Darkness on the Edge of Town (1978). Musically, this album was a turning point in Springsteen's career. Gone were the raw, rapid-fire lyrics, outsized characters and long, multi-part musical compositions of the first three albums; now the songs were leaner and more carefully drawn and began to reflect Springsteen's growing intellectual and political awareness. The cross-country 1978 tour to promote the album would become legendary for the intensity and length of its shows.
+
+By the late 1970s, Bruce Springsteen had earned a reputation in the pop world as a songwriter whose material could provide hits for other bands. Manfred Mann's Earth Band had achieved a U.S. No. 1 pop hit with a heavily rearranged version of Greetings' "Blinded by the Light" in early 1977. Patti Smith reached No. 13 with her take on Springsteen's unreleased "Because the Night" (with revised lyrics by Smith) in 1978, while The Pointer Sisters hit No. 2 in 1979 with Springsteen's also unreleased "Fire". Although not a critical success, long time friend Southside Johnny recorded "The Fever" in early 1976, "Talk to Me" in 1978, both contributions from Springsteen. The two of them along with Steve Van Zandt collaborated to produce "Trapped Again" in 1978.
+In September 1979, Springsteen and the E Street Band joined the Musicians United for Safe Energy anti-nuclear power collective at Madison Square Garden for two nights, playing an abbreviated set while premiering two songs from his upcoming album. The subsequent No Nukes live album, as well as the following summer's No Nukes documentary film, represented the first official recordings and footage of Springsteen's fabled live act, as well as Springsteen's first tentative dip into political involvement.
+Springsteen continued to consolidate his thematic focus on working-class life with the 20-song double album The River in 1980, which included an intentionally paradoxical range of material from good-time party rockers to emotionally intense ballads, and finally yielded his first hit Top Ten single as a performer, "Hungry Heart". Like the previous two albums, musical styles on The River were derived largely from rock music of the Fifties and Sixties, but with a more explicit pop-rock sound than earlier albums. This is apparent in the stylistic adoption of Eighties pop-rock hallmarks like the reverberating-tenor drums, very basic percussion/guitar and repetitive lyrics apparent in many of the tracks. The title song pointed to Springsteen's intellectual direction, while a couple of the lesser-known tracks presaged his musical direction. The album sold well, becoming his first topper on the Billboard Pop Albums chart, and a long tour in 1980 and 1981 followed, featuring Springsteen's first extended playing of Europe and ending with a series of multi-night arena stands in major cities in the U.S.
+The River was followed in 1982 by the stark solo acoustic Nebraska. Recording sessions had been held to expand on a demo tape Springsteen had made at his home on a simple, low-tech four-track tape deck. However during the recording process Springsteen and producer Jon Landau realized the songs worked better as solo acoustic numbers than full band renditions and the original demo tape was released as the album. Although the recordings of the E Street Band were shelved, other songs from these sessions would later be released, including "Born in the U.S.A." and "Glory Days". According to the Marsh biographies, Springsteen was in a depressed state when he wrote this material, and the result is a brutal depiction of American life. While Nebraska did not sell as well as Springsteen's three previous albums, it garnered widespread critical praise (including being named "Album of the Year" by Rolling Stone magazine's critics) and influenced later significant works by other major artists, including U2's album The Joshua Tree. It helped inspire the musical genre known as lo-fi music, becoming a cult favorite among indie-rockers. Springsteen did not tour in conjunction with Nebraska's release.
+
+
+=== 1984–1991: Commercial and popular phenomenon ===
+Springsteen is probably best known for his album Born in the U.S.A. (1984), which sold 15 million copies in the U.S., 30 million worldwide, and became one of the best-selling albums of all time with seven singles hitting the Top 10. The title track was a bitter commentary on the treatment of Vietnam veterans, some of whom were Springsteen's friends and bandmates. The lyrics in the verses were entirely unambiguous when listened to, but the anthemic music and the title of the song made it hard for many, from politicians to the common person, to get the lyrics—except those in the chorus, which could be read many ways.
+The song was widely misinterpreted as jingoistic, and in connection with the 1984 presidential campaign became the subject of considerable folklore. Springsteen also turned down several million dollars offered by the Chrysler Corporation to use the song in a car commercial. In later years, to eliminate the bombast and make the song's original meaning more explicitly clear, Springsteen performed the song accompanied only by acoustic guitar, thus returning to how the song was originally conceived. The original acoustic version of the song, recorded in 1982 during the Nebraska sessions appeared on the 1998 archival release Tracks. "Dancing in the Dark" was the biggest of seven hit singles from Born in the U.S.A., peaking at No. 2 on the Billboard music charts. The music video for the song featured a young Courteney Cox dancing on stage with Springsteen, an appearance which helped kickstart the actress's career. The song "Cover Me" was written by Springsteen for Donna Summer, but his record company persuaded him to keep it for the new album. A big fan of Summer's work, Springsteen wrote another song for her, "Protection". Videos for the album were made by noted film directors Brian De Palma and John Sayles. Springsteen was featured on the "We Are the World" song and album in 1985. His live single "Trapped" from that album received moderate airplay on U.S. Top 40 stations as well as reaching No. 1 on the Billboard Top Rock Tracks chart.
+During the Born in the U.S.A. Tour, Springsteen met actress Julianne Phillips, whom he would marry in 1985.
+
+The Born in the U.S.A. period represented the height of Springsteen's visibility in popular culture and the broadest audience demographic he would ever reach (aided by the release of Arthur Baker's dance mixes of three of the singles). Live/1975–85, a five-record box set (also on three cassettes or three CDs), was released near the end of 1986 and became the first box set to debut at No. 1 on the U.S. album charts. It is one of the most commercially successful live albums of all time, ultimately selling 13 million units in the U.S. Live/1975–85 summed up Springsteen's career to that point and displayed some of the elements that made his shows so powerful to his fans: the switching from mournful dirges to party rockers and back; the communal sense of purpose between artist and audience; the long, intense spoken passages before songs, including those describing Springsteen's difficult relationship with his father; and the instrumental prowess of the E Street Band, such as in the long coda to "Racing in the Street". Despite its popularity, some fans and critics felt the album's song selection could have been better. Springsteen concerts are the subjects of frequent bootleg recording and trading among fans.
+During the 1980s, several Springsteen fanzines were launched, including Backstreets magazine, which started in Seattle and continues today as a glossy publication, now in communication with Springsteen's management and official website.
+After this commercial peak, Springsteen released the much more sedate and contemplative Tunnel of Love album (1987), a mature reflection on the many faces of love found, lost and squandered, which only selectively used the E Street Band. It presaged the breakup of his marriage to Julianne Phillips and described some of his unhappinesses in the relationship. Reflecting the challenges of love in "Brilliant Disguise", Springsteen sang:
+The subsequent Tunnel of Love Express Tour shook up fans with changes to the stage layout, favorites dropped from the set list, and horn-based arrangements. During the European leg in 1988, Springsteen's relationship with backup singer Patti Scialfa became public. Phillips and Springsteen filed for divorce in 1988.
+On July 19, 1988, Springsteen held a concert in East Germany that attracted 300,000 spectators. Journalist Erik Kirschbaum has called the concert "the most important rock concert ever, anywhere," in his 2013 book Rocking the Wall. Bruce Springsteen: The Berlin Concert That Changed the World. It had been conceived by the Communist Party's youth arm in an attempt to placate the youth of East Germany, who were hungry for more freedom and the popular music of the West. However, it is Kirschbaum's opinion that the success of the concert catalyzed opposition to the regime in the DDR, and helped contribute to the fall of the Berlin Wall the following year.
+Later in 1988, Springsteen headlined the worldwide Human Rights Now! tour for Amnesty International. In late 1989 he dissolved the E Street Band, and he and Scialfa relocated to California, marrying in 1991.
+
+
+=== 1992–1998: Artistic and commercial ups and downs and soundtrack work ===
+In 1992, after risking fan accusations of "going Hollywood" by moving to Los Angeles (a radical move for someone so linked to the blue-collar life of the Jersey Shore) and working with session musicians, Springsteen released two albums at once. Human Touch and Lucky Town were even more introspective than any of his previous work and displayed a newly revealed confidence. As opposed to his first two albums, which dreamed of happiness, and his next four, which showed him growing to fear it, at points during the Lucky Town album, Springsteen actually claims happiness for himself.
+An electric band appearance on the acoustic MTV Unplugged television program (later released as In Concert/MTV Plugged) was poorly received and further cemented fan dissatisfaction. Springsteen seemed to realize this a few years hence when he spoke humorously of his late father during his Rock and Roll Hall of Fame acceptance speech:
+A multiple Grammy Award winner, Springsteen also won an Academy Award in 1994 for his song "Streets of Philadelphia", which appeared on the soundtrack to the film Philadelphia. The music video for the song shows Springsteen's actual vocal performance, recorded using a hidden microphone, to a prerecorded instrumental track. This technique was developed on the "Brilliant Disguise" video.
+In 1995, after temporarily re-organizing the E Street Band for a few new songs recorded for his first Greatest Hits album (a recording session that was chronicled in the documentary Blood Brothers), he released his second (mostly) solo guitar album, The Ghost of Tom Joad, inspired by John Steinbeck's The Grapes of Wrath and by Journey to Nowhere: The Saga of the New Underclass, a book by Pulitzer Prize-winners author Dale Maharidge and photographer Michael Williamson. This was generally less well-received than the similar Nebraska, due to the minimal melody, twangy vocals, and political nature of most of the songs, although some praised it for giving voice to immigrants and others who rarely have one in American culture. The lengthy, worldwide, small-venue solo acoustic Ghost of Tom Joad Tour that followed successfully featured many of his older songs in drastically reshaped acoustic form, although Springsteen had to explicitly remind his audiences to be quiet and not to clap during the performances.
+In April 1996, Springsteen gave a very forward-looking interview to The Advocate LGBT magazine's Judy Wieder, in which he spoke of the importance of fighting for gay marriage. "You get your license, you do all the social rituals. It's part of your place in society, and in some way part of society's acceptance of you." It seemed like a natural extension of the support that began with his 1994 Academy Award for "Streets of Philadelphia" which showed the saga of a dying gay man struggling with AIDS.
+Following the tour, Springsteen moved back to New Jersey with his family. In 1998, Springsteen released the sprawling, four-disc box set of out-takes, Tracks. Subsequently, Springsteen would acknowledge that the 1990s were a "lost period" for him: "I didn't do a lot of work. Some people would say I didn't do my best work."
+
+
+=== 1999–2007: Return to success ===
+
+Springsteen was inducted into the Rock and Roll Hall of Fame in 1999 by Bono of U2, a favor he returned in 2005.
+In 1999, Springsteen and the E Street Band reunited and began their extensive Reunion Tour, lasting over a year. Highlights included a record sold-out, 15-show run at Continental Airlines Arena in East Rutherford, New Jersey and a ten-night, sold-out engagement at New York City's Madison Square Garden, which ended the tour. The final two shows were recorded for HBO, with corresponding DVD and album releases as Bruce Springsteen & The E Street Band: Live in New York City. A new song, "American Skin (41 Shots)", about the police shooting of Amadou Diallo, which was played at these shows proved controversial.
+In 2002, Springsteen released his first studio effort with the full band in 18 years, The Rising, produced by Brendan O'Brien. The album, mostly a reflection on the September 11 attacks, was a critical and popular success. (Many of the songs were influenced by phone conversations Springsteen had with family members of victims of the attacks who in their obituaries had mentioned how his music touched their lives.) The title track gained airplay in several radio formats, and the record became Springsteen's best-selling album of new material in 15 years. Kicked off by an early-morning Asbury Park appearance on The Today Show, The Rising Tour commenced, barnstorming through a series of single-night arena stands in the U.S. and Europe to promote the album in 2002, then returning for large-scale, multiple-night stadium shows in 2003. While Springsteen had maintained a loyal hardcore fan base everywhere (and particularly in Europe), his general popularity had dipped over the years in some southern and midwestern regions of the U.S. because of his vocal endorsement of leftist, liberal politics. But it was still strong in Europe and along the U.S. coasts, and he played an unprecedented 10 nights in Giants Stadium in New Jersey, a ticket-selling feat to which no other musical act has come close. During these shows Springsteen thanked those fans who were attending multiple shows and those who were coming from long distances or another country; the advent of robust Springsteen-oriented online communities had made such practices more common. The Rising Tour came to a final conclusion with three nights in Shea Stadium, highlighted by renewed controversy over "American Skin" and a guest appearance by Bob Dylan.
+During the early 2000s, Springsteen became a visible advocate for the revitalization of Asbury Park, and played an annual series of winter holiday concerts there to benefit various local businesses, organizations, and causes. These shows were explicitly intended for the devoted fans, featuring numbers such as the E Street Shuffle outtake "Thundercrack", a rollicking group-participation song that would mystify casual Springsteen fans. He also frequently rehearses for tours in Asbury Park; some of his most devoted followers even go so far as to stand outside the building to hear what fragments they can of the upcoming shows. The song "My City of Ruins" was originally written about Asbury Park, in honor of the attempts to revitalize the city. Looking for an appropriate song for the America: A Tribute to Heroes telethon broadcast, he selected "My City of Ruins", which was immediately recognized as an emotional highlight of the broadcast, with its gospel themes and its heartfelt exhortations to "Rise up!" The song became associated with post-9/11 New York, and he chose it to close The Rising album and as an encore on the subsequent tour.
+At the Grammy Awards of 2003, Springsteen performed The Clash's "London Calling" along with Elvis Costello, Dave Grohl, and E Street Band member Steven Van Zandt and No Doubt's bassist, Tony Kanal, in tribute to Joe Strummer; Springsteen and the Clash had once been considered multiple-album-dueling rivals at the time of the double The River and the triple Sandinista!. In 2004, Springsteen and the E Street Band participated in the Vote for Change tour, along with John Mellencamp, John Fogerty, the Dixie Chicks, Pearl Jam, R.E.M., Bright Eyes, the Dave Matthews Band, Jackson Browne, and other musicians. All concerts were to be held in swing states, to benefit the progressive political organization group America Coming Together and to encourage people to register and vote. A finale was held in Washington, D.C., bringing many of the artists together. Several days later, Springsteen held one more such concert in New Jersey, when polls showed that state surprisingly close. While in past years Springsteen had played benefits for causes in which he believed —against nuclear energy, for Vietnam veterans, Amnesty International, and the Christic Institute—he had always refrained from explicitly endorsing candidates for political office (indeed he had rejected the efforts of Walter Mondale to attract an endorsement during the 1984 Reagan "Born in the U.S.A." flap). This new stance led to criticism and praise from the expected partisan sources. Springsteen's "No Surrender" became the main campaign theme song for John Kerry's unsuccessful presidential campaign; in the last days of the campaign, he performed acoustic versions of the song and some of his other old songs at Kerry rallies.
+
+Devils & Dust was released on April 26, 2005, and was recorded without the E Street Band. It is a low-key, mostly acoustic album, in the same vein as Nebraska and The Ghost of Tom Joad although with a little more instrumentation. Some of the material was written almost 10 years earlier during, or shortly after, the Ghost of Tom Joad Tour, with a few having been performed then but not released. The title track concerns an ordinary soldier's feelings and fears during the Iraq War. Starbucks rejected a co-branding deal for the album, due in part to some sexually explicit content but also because of Springsteen's anti-corporate politics. The album entered the album charts at No. 1 in 10 countries (United States, Austria, Switzerland, Sweden, Denmark, Italy, Germany, the Netherlands, the United Kingdom, and Ireland). Springsteen began the solo Devils & Dust Tour at the same time as the album's release, playing both small and large venues. Attendance was disappointing in a few regions, and everywhere (other than in Europe) tickets were easier to get than in the past. Unlike his mid-1990s solo tour, he performed on piano, electric piano, pump organ, autoharp, ukulele, banjo, electric guitar, and stomping board, as well as acoustic guitar and harmonica, adding variety to the solo sound. (Offstage synthesizer, guitar, and percussion were also used for some songs.)
+In November 2005, Sirius Satellite Radio started a 24-hour, seven-day-a-week radio station called E Street Radio. This channel featured commercial-free Bruce Springsteen music, including rare tracks, interviews, and daily concerts of Bruce Springsteen & the E Street Band recorded throughout their career.
+
+In April 2006, Springsteen released We Shall Overcome: The Seeger Sessions, an American roots music project focused around a big folk sound treatment of 15 songs popularized by the radical musical activism of Pete Seeger. It was recorded with a large ensemble of musicians including only Patti Scialfa, Soozie Tyrell, and The Miami Horns from past efforts. In contrast to previous albums, this was recorded in only three one-day sessions, and frequently one can hear Springsteen calling out key changes live as the band explores its way through the tracks. A tour began the same month, featuring the 18-strong ensemble of musicians dubbed The Seeger Sessions Band (and later shortened to The Sessions Band). Seeger Sessions material was heavily featured, as well as a handful of (usually drastically rearranged) Springsteen numbers. The tour proved very popular in Europe, selling out everywhere and receiving some excellent reviews, but newspapers reported that a number of U.S. shows suffered from sparse attendance. By the end of 2006, the Seeger Sessions tour toured Europe twice and toured America for only a short span. Bruce Springsteen with The Sessions Band: Live in Dublin, containing selections from three nights of November 2006 shows at the Point Theatre in Dublin, Ireland, was released the following June.
+Springsteen's next album, titled Magic, was released on October 2, 2007. Recorded with the E Street Band, it featured 10 new Springsteen songs plus "Long Walk Home", performed once with the Sessions band, and a hidden track (the first included on a Springsteen studio release), "Terry's Song", a tribute to Springsteen's long-time assistant Terry Magovern, who died on July 30, 2007. Magic debuted at No. 1 in Ireland and the UK. Greatest Hits reentered the Irish charts at No. 57, and Live in Dublin almost cracked the top 20 in Norway again. Sirius Satellite Radio also restarted E Street Radio on September 27, 2007, in anticipation of Magic. Radio conglomerate Clear Channel Communications was alleged to have sent an edict to its classic rock stations to not play any songs from the new album, while continuing to play older Springsteen material. However, Clear Channel Adult Alternative (or "AAA") station KBCO did play tracks from the album, undermining the allegations of a corporate blackout.
+The Springsteen and E Street Band Magic Tour began at the Hartford Civic Center with the album's release and continued through North America and Europe.
+It was announced on November 21, 2007, that Springsteen's longtime friend and founding E Street Band member, Danny Federici, would be taking a leave of absence from the Magic Tour to pursue treatment for melanoma. Charles Giordano filled in as Federici's replacement. Springsteen stated: "Danny is one of the pillars of our sound and has played beside me as a great friend for more than 40 years. We all eagerly await his healthy and speedy return."[this quote needs a citation]
+
+
+=== 2008–2011: Deaths of Danny Federici and Clarence Clemons ===
+
+Federici returned to the stage on March 20, 2008, when he appeared for portions of a Springsteen and E Street Band performance at Conseco Fieldhouse in Indianapolis. Less than one month later, on April 17, 2008, Federici died at the Memorial Sloan-Kettering Cancer Center in New York City, having suffered for three years with melanoma.
+Springsteen supported Barack Obama's 2008 presidential campaign, announcing his endorsement in April 2008 and going on to appear at several Obama rallies as well as performing several solo acoustic performances in support of Obama's campaign throughout 2008, culminating with a November 2 rally at which he debuted the song "Working on a Dream" in a duet with Scialfa. At an Ohio rally, Springsteen discussed the importance of "truth, transparency and integrity in government, the right of every American to have a job, a living wage, to be educated in a decent school, and a life filled with the dignity of work, the promise and the sanctity of home...But today those freedoms have been damaged and curtailed by eight years of a thoughtless, reckless and morally adrift administration."
+Following Obama's electoral victory on November 4, Springsteen's song "The Rising" was the first song played over the loudspeakers after Obama's victory speech in Chicago's Grant Park. Springsteen was the musical opener for the Obama Inaugural Celebration on January 18, 2009, which was attended by over 400,000 people. He performed "The Rising" with an all-female choir. Later he performed Woody Guthrie's "This Land Is Your Land" with Pete Seeger.
+On January 11, 2009, Springsteen won the Golden Globe Award for Best Song for "The Wrestler", from the Mickey Rourke film by the same name. After receiving a heartfelt letter from Rourke, Springsteen supplied the song for the film for free.
+Springsteen performed at the halftime show at Super Bowl XLIII on February 1, 2009, agreeing to do it after many previous offers. A few days before the game, Springsteen gave a rare press conference at which he promised a "twelve-minute party." His 12-minute 45-second set, with the E Street Band and the Miami Horns, included abbreviated renditions of "Tenth Avenue Freeze-Out"", "Born to Run", "Working on a Dream", and "Glory Days", the latter complete with football references in place of the original baseball-themed lyrics. The set of appearances and promotional activities led Springsteen to say, "This has probably been the busiest month of my life."
+Springsteen's Working on a Dream album, dedicated to the memory of Danny Federici, was released in late January 2009 and the supporting Working on a Dream Tour ran from April 2009 until November 2009. The tour featured few songs from the new album, with set lists dominated instead by classics and selections reflecting the ongoing late-2000s recession. The tour also featured Springsteen playing songs requested by audience members holding up signs, a practice begun during the final stages of the Magic Tour. Drummer Max Weinberg was replaced for some shows by his 18-year-old son Jay Weinberg, so that the former could serve his role as bandleader on The Tonight Show with Conan O'Brien. During this tour, Springsteen and the band made their first real foray in the world of music festivals, headlining nights at the Pinkpop Festival in the Netherlands, Festival des Vieilles Charrues in France, the Bonnaroo Music Festival in the United States and the Glastonbury Festival and Hard Rock Calling in the UK. Several shows on the tour featured full-album presentations of Born to Run, Darkness on the Edge of Town, or Born in the U.S.A. The band performed a stretch of five final shows at Giants Stadium, opening with a new song highlighting the historic stadium, and Springsteen's Jersey roots, named "Wrecking Ball". A DVD from the Working on a Dream Tour entitled London Calling: Live in Hyde Park was released in 2010.
+
+Springsteen was among the recipients of the Kennedy Center Honors, an annual award to figures from the world of arts for their contribution to American culture, in December 2009. President Obama gave a speech in which he talked about how Springsteen has incorporated the life of regular Americans in his expansive palette of songs and how his concerts are beyond the typical rock-and-roll concerts, how, apart from being high-energy concerts, they are "communions". He ended the remark "while I am the president, he is the Boss". Tributes were paid by several well-known celebrities including Jon Stewart (who described Springsteen's "unprecedented combination of lyrical eloquence, musical mastery and sheer unbridled, unadulterated joy"). A musical tribute featured John Mellencamp, Ben Harper, Jennifer Nettles, Melissa Etheridge, Eddie Vedder, and Sting.
+The 2000s ended with Springsteen being named one of eight Artists of the Decade by Rolling Stone magazine and with Springsteen's tours ranking him fourth among artists in total concert grosses for the decade. His 2010 tour included venues in the UK and Ireland.
+In September 2010, a documentary about the making of Springsteen's 1978 album Darkness on the Edge of Town premiered at the Toronto International Film Festival. The film, The Promise: The Making of Darkness on the Edge of Town, was included in a box set reissue of the album, entitled The Promise: The Darkness on the Edge of Town Story, released in November 2010. Also airing on HBO, the documentary explored Springsteen's making of the album and his role in the production and development of the tracks.
+Clarence Clemons, the E Street Band's saxophonist and founding member, died on June 18, 2011, of complications from a stroke. "Clarence lived a wonderful life," Springsteen said in a statement. "He carried within him a love of people that made them love him. He created a wondrous and extended family. He loved the saxophone, loved our fans and gave everything he had every night he stepped on stage."
+
+
+=== 2012–2013: Wrecking Ball ===
+
+Springsteen's 17th studio album, Wrecking Ball, was released on March 6, 2012. The album consists of eleven tracks plus two bonus tracks. Three songs previously only available as live versions—"Wrecking Ball", "Land of Hope and Dreams", and "American Land"—appear on the album. Wrecking Ball became Springsteen's tenth No. 1 album in the United States, tying him with Elvis Presley for third most No. 1 albums of all-time. Only the Beatles (19) and Jay-Z (12) have more No. 1 albums.
+Following the release of the album, Springsteen and the E Street Band announced plans for the Wrecking Ball Tour, which began on March 18, 2012. As tickets for the first U.S. dates went on sale, many fans were unable to obtain tickets, much like for the 2009 Working on a Dream Tour, allegedly due to a heavy volume of ticket scalpers. Shows sold out within minutes and many tickets appeared, at much higher prices, on resale websites such as StubHub less than an hour after the onsale time. Ticketmaster said web traffic was 2.5 times the highest level of the past year during the online sales and suggested that scalpers played a big role.
+On July 31, 2012, in Helsinki, Finland, Springsteen performed his longest concert ever at 4 hours and 6 minutes and 33 songs. Not included in this total time is a thirty-minute, five-song, solo acoustical set he did about two hours prior to the beginning of the show.
+Springsteen was honored with the 2013 MusiCares Person of the Year award in recognition of his creative accomplishments as well as his charitable work and philanthropic activities. A ceremony was held on February 8, 2013, at the Staples Center in Los Angeles, California, two days before the Grammy Awards.
+Despite saying he would sit out the 2012 presidential election, Springsteen campaigned for President Barack Obama's re-election in Ohio, Iowa, Virginia, Pittsburgh, and Wisconsin. At the rallies, Springsteen briefly spoke to the audience and performed a short acoustic set that included a newly-written song titled "Forward". Obama also used "We Take Care of Our Own" as one of his top campaign songs. Use of the song helped boost sales of the song by 409%.
+On October 29, 2012, the New Jersey area was hit hard by Hurricane Sandy. Two days following the storm, Springsteen dedicated his performance at the Blue Cross Arena in Rochester, New York, to those affected by the storm and those helping to recover. Springsteen and the E Street Band performed "Land of Hope and Dreams" at a one-hour televised telethon called Hurricane Sandy: Coming Together on November 2, 2012, which aired on NBC and at the same time many other channels. Springsteen also joined Billy Joel, Steven Tyler and Jimmy Fallon for a performance of "Under the Boardwalk". All money was donated to the American Red Cross. Springsteen and the E Street Band, along with many top names in the music industry, performed at Madison Square Garden on December 12, 2012, for 12-12-12: The Concert for Sandy Relief.
+At year's end, the Wrecking Ball Tour was named Top Draw for having the top attendance out of any tour by the Billboard Touring Awards. The tour finished second to Roger Waters, who had the top grossing tour of 2012. Springsteen finished second only to Madonna as the top money maker of 2012 with $33.44 million. The Wrecking Ball album, along with the single "We Take Care of Our Own", was nominated for three Grammy Awards, including Best Rock Performance and Best Rock Song for "We Take Care of Our Own" and Best Rock Album. Rolling Stone named Wrecking Ball the number one album of 2012 on their Top 50 albums of 2012 list.
+In March 2013, and for the first time since re-uniting with Springsteen in 1999, Steven Van Zandt was forced to miss the Australian leg of the band's tour due to acting commitments on his television show Lilyhammer. Van Zandt was replaced by guitarist Tom Morello for the leg.
+In late July 2013, director Baillie Walsh's documentary, Springsteen & I, was released simultaneously via a worldwide cinema broadcast in over 50 countries and in over 2000 movie theaters.
+The Wrecking Ball Tour, which came to an end in September 2013, was one of Springsteen's most successful tours ever. A week after the tour ended, Springsteen announced a 2014 tour that would include dates in Australia and New Zealand.
+Springsteen, along with friend and mentor Pete Seeger, as well as Herbie Hancock, Sally Field and Robert De Niro, were among a total of 198 class of 2013 inductees into the American Academy of Arts and Sciences. The induction ceremony was held at the Academy's headquarters in Cambridge, Massachusetts in October 2013.
+Springsteen released a letter in October 2013 through his website thanking fans of all ages for their support throughout the Wrecking Ball World Tour. A highlight video of the tour was also released featuring a new studio recording of the Suicide song, "Dream Baby Dream".
+
+
+=== 2014–present: High Hopes ===
+Springsteen released his eighteenth studio album, High Hopes, on January 14, 2014. The first single and music video was a newly recorded version of the song "High Hopes", which Springsteen had previously recorded in 1995. The album was the first by Springsteen in which all songs are either cover songs, newly recorded outtakes from previous records, or newly recorded versions of songs previously released. The 2014 E Street Band touring lineup, along with deceased E Street Band members Clarence Clemons and Danny Federici, appears on the album along with guitarist Tom Morello.
+On December 16, 2013, the E Street Band were named 2014 inductees to the Rock and Roll Hall of Fame. They will be given a special Award for Musical Excellence. Springsteen was previously inducted in 1999 as a solo artist.
+On January 15, 2014, it was announced that Springsteen would start making professional recordings of all of his live shows available following each performance on his upcoming tour via download to a special USB wristband. In addition to the wristbands, shows will also be offered through Springsteen's website.
+High Hopes became Springsteen's eleventh No. 1 album in the United States. It was his tenth No. 1 in the UK, tying him for fifth all-time the Rolling Stones and U2. On April 4, 2014, HBO will air Bruce Springsteen's High Hopes a 30 minute documentary on the recording of High Hopes.
+On April 19, 2014, Springsteen will release American Beauty, a limited edition four song EP on 12-inch vinyl that will be released exclusively for Record Store Day. The EP will contain four unreleased songs from the High Hopes sessions.
+On April 10, 2014, Springsteen inducted past and present members of the E Street Band into the Rock and Roll Hall of Fame with each member giving speeches and Springsteen and the band performing a three song set of "The E Street Shuffle", "The River" and "Kitty's Back". HBO will air the ceremony on May 31, 2014.
+
+
+== Musical style ==
+
+Bruce Springsteen draws on many musical influences from the reservoir of traditional American popular music, folk, blues and country. From the beginning, rock and roll has been a dominant influence and Springsteen's musical and lyrical evocations, as well as public tributes, of artists such as Dylan, Presley, Roy Orbison, Gary "U.S." Bonds, and many others helped to rekindle interest in their music. Springsteen's other preferred musical style is American folk, evident on his debut album, Greetings from Asbury Park, New Jersey, and more strongly on Nebraska and The Ghost of Tom Joad. Springsteen songs such as "This Hard Land" demonstrate the lyrical and musical influence of Woody Guthrie.
+Elements of Latin American music, jazz, soul, and funk influences can be heard on Springsteen's second album, The Wild, the Innocent & the E Street Shuffle; the song "New York City Serenade" is even reminiscent of the music of George Gershwin. These two records prominently featured pianist David Sancious, who left the band shortly into the recording of Springsteen's third album, Born To Run. This album, however, also emphasized the piano, the responsibility now of Roy Bittan.
+Subsequently in his career, Springsteen focused more on the rock elements of his music. He initially compressed the sound and developed Darkness on the Edge of Town just as straightforward as concise musical idiom, for the simple riffs, hard rock guitar solos and clearly recognizable song structures are dominant. He also drew upon a few influences from punk rock on the album, as can be heard on the heavy rhythm following the bridge solo on 'Candy's Room'. His music has been categorized as heartland rock, a style typified by Springsteen, John Fogerty, Tom Petty, Bob Seger, and John Mellencamp. This music has a lyrical reference to the U.S. everyday and the music is kept rather simple and straightforward. This development culminated with Springsteen's hit album Born in the U.S.A., the title song of which has a constantly repeating, fanfare-like keyboard riff and a pounding drum beat. These sounds fit with Springsteen's voice: it cries to the listener the unsentimental story of a disenchanted angry figure. Even songs that can be argued to be album tracks proved to be singles that enjoyed some chart success, such as "My Hometown" and "I'm on Fire", in which the drum line is formed from subtle hi-hat and rim-clicks-shock (shock at the edge of the snare drum) accompanied by synthesizer and Springsteen's soft guitar line. The album, along with some previous records such as "Cadillac Ranch" showed clear rockabilly influences as is evident from his guitar solos, in-fills and vocal styles on these. Another clear influence of early rock n roll on Springsteen's music is evident on the song "Light of Day".
+In recent years, Springsteen has changed his music further. There are more folk elements up to the gospel to be heard. His last solo album, Devils and Dust, drew rave reviews not only for Springsteen's complex songwriting, but also for his expressive and sensitive singing.
+On the album We Shall Overcome: The Seeger Sessions Springsteen performed folk classics with a folk band, rather than his usual E Street Band. On his ensuing tour he also interpreted some of his own rock songs in a folk style.
+His 2012 album, Wrecking Ball, incorporated a variety of styles including rock, gospel, folk, punk and even sampling and loops.
+
+
+== Lyrical themes ==
+
+Often described as cinematographic in their scope, Springsteen's lyrics frequently explore highly personal themes such as individual commitment, dissatisfaction and dismay with life in a context of every day situations.
+It has been recognized that there was a shift in his lyrical approach starting with the album Darkness on the Edge of Town, in which he focused on the emotional struggles of working class life.
+
+
+== Personal life ==
+
+In the early 1980s, Springsteen met Patti Scialfa at The Stone Pony, a bar in New Jersey where local musicians perform on a regular basis. On that particular evening she was performing alongside one of Springsteen’s pals, Bobby Bandiera, with whom she had written "At Least We Got Shoes" for Southside Johnny. Springsteen liked her voice and after the performance, introduced himself to her. Soon after that, they started spending time together and became friends.
+Early in 1984 Springsteen asked Scialfa to join the E Street Band for the upcoming Born in the U.S.A. Tour. According to the book Bruce Springsteen on Tour 1969–2005 by Dave Marsh, it looked like Springsteen and Scialfa were on the brink of becoming a couple through the first leg of the tour. But before that could happen, Barry Bell introduced Julianne Phillips to Springsteen and on May 13, 1985, they got married. The two were opposites in background, had an 11-year age difference and his traveling took its toll on their relationship. In 1987, Springsteen wrote his next album, Tunnel of Love, on which many of the songs described his unhappiness in the relationship with Phillips.
+In 1988 the Tunnel of Love Express Tour began and Springsteen convinced Scialfa to join the tour again. She was reluctant at first, since she wanted to start recording her first solo album, but after Springsteen told her that the tour would be short, she agreed to postpone her own solo record. Phillips and Springsteen separated in the spring of 1988, but it wasn’t made known to the press. Springsteen and Scialfa fell in love with each other during the Tunnel of Love Express Tour and started living together soon after his separation from Phillips. On August 30, 1988, Julianne filed for divorce. The Springsteen/Phillips divorce was finalized on March 1, 1989. Springsteen received press criticism for the hastiness in which he and Scialfa took up their relationship. In a 1995 interview with The Advocate, Springsteen told Judy Wieder about the negative publicity the couple subsequently received. "It's a strange society that assumes it has the right to tell people whom they should love and whom they shouldn't. But the truth is, I basically ignored the entire thing as much as I could. I said, 'Well, all I know is, this feels real, and maybe I have got a mess going here in some fashion, but that's life.'" He also told Wieder that, "I went through a divorce, and it was really difficult and painful and I was very frightened about getting married again. So part of me said, 'Hey, what does it matter?' But it does matter. It's very different than just living together. First of all, stepping up publicly—which is what you do: You get your license, you do all the social rituals—is a part of your place in society and in some way part of society's acceptance of you ... Patti and I both found that it did mean something."
+Springsteen and Scialfa initially lived in New Jersey and for a short while in New York, before deciding to move to Los Angeles where they decided to start a family. On July 25, 1990, Scialfa gave birth to the couple's first child, Evan James Springsteen. On June 8, 1991, Springsteen and Scialfa married at their Los Angeles home in a very private ceremony, only attended by family and close friends. Their second child, Jessica Rae Springsteen, was born on December 30, 1991; and their third child, Samuel Ryan Springsteen, was born on January 5, 1994.
+When the children reached school-going age in the early 1990s, Springsteen and Scialfa moved back to New Jersey specifically to raise a family in a non-paparazzi environment. The grounds of his New Jersey home include a large swimming pool. The family owns and lives on a horse farm in Colts Neck, New Jersey. They also own homes in Wellington, Florida, a wealthy horse community near West Palm Beach, Los Angeles and Rumson, New Jersey.
+Their eldest son, Evan, graduated from Boston College. He writes and performs his own songs and won the 2012 Singer/Songwriter Competition held during the Boston College's Arts Festival. Their daughter Jessica is a nationally ranked champion equestrian, and attends Duke University. Their youngest son, Sam, is a firefighter.
+It has been reported that the press conference regarding the 2009 Super Bowl XLIII half-time show was Springsteen's first press conference for more than 25 years. However, he has appeared in a few radio interviews, most notably on NPR and BBC. 60 Minutes aired his last extensive interview on TV before his tour to support his album, Magic.
+Springsteen is also an activist for gay rights and has spoken out many times as a strong supporter of gay marriage. In 2009, he posted the following statement on his website: "I've long believed in and have always spoken out for the rights of same sex couples and fully agree with Governor Corzine when he writes that 'The marriage-equality issue should be recognized for what it truly is—a civil rights issue that must be approved to assure that every citizen is treated equally under the law.'" In 2012, he lent his support to an ad campaign for gay marriage called "The Four 2012". Springsteen noted in the ad, "I couldn't agree more with that statement and urge those who support equal treatment for our gay and lesbian brothers and sisters to let their voices be heard now."
+
+
+== Bands ==
+
+Bruce Springsteen has been a member of, or has been backed by, several bands during his career, most notably The E Street Band.
+Prior to signing his first record deal in 1972, Springsteen was a member of several bands including Steel Mill. In October 1972 he formed a new band for the recording of his debut album Greetings from Asbury Park, N.J., which became known as The E Street Band, although the name was not officially introduced until September 1974. The E Street Band performed on all of Springsteen's recorded works from his debut until 1982's Nebraska, a solo album on which Springsteen himself played all the instruments. The full band returned for the next album Born in the USA, but there then followed a period from 1988 to 1999 in which albums were recorded with session musicians. The E Street Band were briefly reunited in 1995 for new contributions to the Greatest Hits compilation, and on a more permanent basis from 1999, since which time they have recorded four albums together (The Rising, Magic, Working on a Dream and Wrecking Ball) and performed a number of high profile tours.
+The 2005 album Devils & Dust was largely a solo recording, with some contribution from session musicians and the 2006 folk rock We Shall Overcome: The Seeger Sessions album was recorded and toured with another band, known as The Sessions Band.
+Earlier Bands: The Castiles, Earth, Child, Steel Mill, Sundance Blues Band, Dr Zoom and the Sonic Boom, Bruce Springsteen Band.
+
+
+== Discography ==
+
+
+== Awards, recognition and rankings ==
+
+
+=== Grammy Awards ===
+Springsteen has won 20 Grammy Awards, as follows (years shown are the year the award was given for, not the year in which the ceremony was held):
+Best Rock Vocal Performance, Male, 1984, "Dancing in the Dark"
+Best Rock Vocal Performance, Male, 1987, "Tunnel of Love"
+Song of the Year, 1995, "Streets of Philadelphia"
+Best Rock Song, 1995, "Streets of Philadelphia"
+Best Rock Vocal Performance, Solo, 1995, "Streets of Philadelphia"
+Best Song Written Specifically for a Motion Picture or Television, 1995, "Streets of Philadelphia"
+Best Contemporary Folk Album, 1996, The Ghost of Tom Joad
+Best Rock Album, 2002, The Rising
+Best Rock Song, 2002, "The Rising"
+Best Male Rock Vocal Performance, 2002, "The Rising"
+Best Rock Performance by a Duo or Group with Vocal, 2003, "Disorder in the House" (with Warren Zevon)
+Best Solo Rock Vocal Performance, 2004, "Code of Silence"
+Best Solo Rock Vocal Performance, 2005, "Devils & Dust"
+Best Traditional Folk Album, 2006, The Seeger Sessions: We Shall Overcome
+Best Long Form Music Video, 2006, Wings For Wheels: The Making Of Born to Run
+Best Solo Rock Vocal Performance, 2007, "Radio Nowhere"
+Best Rock Song, 2007, "Radio Nowhere"
+Best Rock Instrumental Performance, 2007, "Once Upon a Time in the West"
+Best Rock Song, 2008, "Girls in Their Summer Clothes"
+Best Solo Rock Vocal Performance, 2009, "Working on a Dream"
+In addition to these twenty Grammy Award wins, Bruce Springsteen was honored as MusiCares Person of the Year on February 8, 2013.
+
+
+=== Golden Globe Awards ===
+Golden Globe Award for Best Original Song for "Streets of Philadelphia" in 1994.
+Golden Globe Award for Best Original Song for "The Wrestler" in 2009.
+
+
+=== Academy Awards ===
+Academy Award for Best Original Song, 1994, "Streets of Philadelphia" from Philadelphia.
+
+
+=== Other recognition ===
+October 27, 1975: Bruce Springsteen appears simultaneously on the covers of Newsweek and Time
+Polar Music Prize in 1997
+Inducted into the Rock and Roll Hall of Fame, 1999
+Bruce Springsteen & The E Street Band: Live in New York City won two Emmy Awards in 2001
+Inducted into the Songwriters Hall of Fame, 1999
+Inducted into the New Jersey Hall of Fame, 2007
+"Born to Run" named "The unofficial youth anthem of New Jersey" by the New Jersey state legislature; something Springsteen always found to be ironic, considering that the song "is about leaving New Jersey"
+The minor planet 23990, discovered September 4, 1999, by I. P. Griffin at Auckland, New Zealand, was officially named in his honor.
+Ranked No. 23 on Rolling Stone magazine's 2004 list of the 100 Greatest Artists of All Time
+Ranked No. 36 on Rolling Stone magazine's 2004 list of the 100 Greatest Singers of All Time
+Made Time magazine's 100 Most Influential People of the Year 2008 list
+Won Critic's Choice Award for Best Song with "The Wrestler" in 2009
+Performed at the Super Bowl XLIII half time show
+Kennedy Center Honors, 2009
+Rolling Stone magazine also ranked 8 out of 16 Springsteen's studio albums in their 500 Greatest Albums of All Time list.
+Rolling Stone ranked "Born to Run" and "Thunder Road" in its 500 Greatest Songs Of All Time list, in 21st and 86th, respectively.
+Forbes ranked him 6th in The Celebrity 100 in 2009
+John Steinbeck Award, 1996
+Devils & Dust Tour named Top Small Venue Tour of 2005 by Billboard Touring Awards
+Magic Tour named Top Tour and Top Draw of 2008 by Billboard Touring Awards
+Wrecking Ball Tour named Top Draw for most attendance for a tour at the 2012 Billboard Touring Awards
+Named 2013 MusiCares Person of the Year
+Wrecking Ball named best album of 2012 by Rolling Stone on their Top 50 Albums of 2012 list
+2013 inductee to the American Academy of Arts and Sciences
+
+
+== See also ==
+List of artists who reached number one on the U.S. Mainstream Rock chart
+List of best-selling music artists
+Music of New Jersey
+
+
+== Notes ==
+
+
+=== Footnotes ===
+
+
+=== Citations ===
+
+
+== References ==
+
+
+== Further reading ==
+
+
+== External links ==
+Official website
+E Street Radio
+Bruce Springsteen at Idiomag 21 12 10
+Bruce Springsteen at The Rock and Roll Hall of Fame
+Bruce Springsteen on National Public Radio in 2005
+Highlights of Springsteen at Glastonbury 2009.
+Bruce Springsteen at NPR Music
+"Library of Hope and Dreams":bibliography of published Springsteen scholarship in English.
+(French) Francophone Forum devoted to Bruce Springsteen
+(French) Francophone site dedicated to Bruce Springsteen
+The Pointer Sisters :: The Pointer Sisters are an American R&B recording girl group from Oakland, California that achieved mainstream success during the 1970s and 1980s. Spanning over three decades, their repertoire has included such diverse genres as pop, disco, jazz, electronic music, bebop, blues, soul, funk, dance, country and rock. The Pointer Sisters were inducted onto the Hollywood Walk of Fame.
+The group had its early origins when sisters June and Bonnie Pointer began performing in clubs in 1969 as "Pointers, a Pair". The line-up grew to a trio when sister Anita Pointer joined them. They scored a record deal with Atlantic Records and released several unsuccessful singles. The trio grew to a quartet when sister Ruth joined in December 1972. They then signed with Blue Thumb Records, recorded their debut album, and began seeing more success. The group achieved its greatest commercial success as a trio during the 1980s consisting of the line-up of June, Ruth, and Anita. Bonnie had left the group in 1978 to commence a solo career with only modest success.
+
+
+== History ==
+
+
+=== Early days ===
+As children in West Oakland, the Pointer sisters and brothers were encouraged to listen to and sing gospel music by their parents Reverend Elton Pointer and Sarah Pointer. However, they were told rock and roll and the blues were "the devil's music", and it was only when they were away from their watchful parents that they could sing these styles. They regularly sang at the Church of God in Christ in West Oakland, but as the sisters grew older their love of other styles of music began to grow. When June, the youngest sister, brought home a copy of the Elvis Presley record All Shook Up, she was surprised that her mother allowed her to play it, until discovering that her mother had been pacified by the song "Crying in the Chapel" on the "B" side of the record.
+After leaving school Ruth, the oldest sister, was already married with two children Faun (born 1965) and Malik (born 1966), Anita, the second oldest sister, also was married with a child Jada. Bonnie, the third oldest sister, and June sought a show business career and they formed a duo, "Pointers, A Pair". Later, Anita quit her job to join the group. They began touring and performing and provided backing vocals for artists such as Grace Slick, Sylvester James, Boz Scaggs and Elvin Bishop, and it was while supporting Bishop at a nightclub appearance in 1971, that the sisters were signed to a recording contract with Atlantic Records. The resulting singles that came from their Atlantic tenure failed to become hits but, nevertheless, the sisters were enjoying their newfound recording career. The temptation to join them finally overwhelmed Ruth and, in December 1972, she joined the group. The quartet signed to Blue Thumb Records and began to record their first full-fledged album.
+Upon signing, they agreed that they did not want to follow the current trend of pop music but wanted to create an original sound that combined jazz music, jazz singing, and be-bop music. In searching of a visual style for their act, they remembered the poverty of their childhood and their ability to improvise, and used their experience to assemble a collection of vintage 1940s clothes from thrift shops, that would comprise their costumes and give them the distinctive look they were searching for.
+In 1972, they were asked to record "Pinball Number Count" for a series of educational cartoons teaching kids how to count. It made its debut on Sesame Street in 1977 and was a feature on the show for many years.
+They made their television debut performance at the Troubadour nightclub in Los Angeles on The Helen Reddy Show. In 1974 they joined Reddy on the track "Showbiz" which appeared on her "Free and Easy" album.
+
+
+=== First success as recording artists ===
+
+Their self titled first album, was released in 1973 and received positive reviews, with the group being lauded for their versatility and originality. The group was backed up at this time by Bay Area stalwarts, the Hoodoo Rhythm Devils. The first single from this album, "Yes We Can Can", reached number 11 on the pop charts, and would go on to establish itself as an R&B classic. The Allen Toussaint penned song had been a small R&B hit for Lee Dorsey in 1970. The album's second single was a cover of Willie Dixon's Blues stomper "Wang Dang Doodle". It reached the R&B top 40 and the group's thrift shop style began to catch on with fans, many of whom would attend their shows in similar attire.
+The following year they released their second album titled That's a Plenty. It continued in the jazz and be-bop style of its predecessor but provided one exception that caused a great deal of interest. The song "Fairytale", written by Anita and Bonnie, was a country song that reached #13 on the pop charts, and #37 on the country charts. Based on this success, the group was invited to Nashville, Tennessee where they achieved the singular distinction of becoming the first black female singers to perform at the Grand Ole Opry. In 1975, the quartet won a Grammy Award for Best Country Performance by a Duo or Group with Vocal for "Fairytale". Anita and Bonnie were also nominated as songwriters for the Grammy Award for Best Country Song. The song would later be covered by Elvis Presley.
+Their fourth album, Steppin' was released in 1975. Steppin' produced their Grammy-nominated number one R&B single, "How Long (Betcha' Got a Chick on the Side)", which was later sampled by female rap icons Salt-N-Pepa a decade later. The Pointer Sisters also scored another R&B hit from the album with "Going Down Slowly", another Allen Toussaint cover, and in 1976 appeared in the classic blaxploitation film Car Wash. Their song from the movie, "You Gotta Believe", made the R&B top 20 in early 1977.
+They were featured on the 1977 album Saffo Music by Italian R&B singer Lara Saint Paul and produced by Leon Ware, with bass by Chuck Rainey, guitar by Ray Parker Jr. and mixed by Bill Conti. It was released in Italy under LASAPA records.
+Their last album as a quartet was the Jazz/Funk album Having a Party, released in 1977. Though this album neither produced any major hits nor had strong sales, it did feature the Bonnie-led "Don't It Drive You Crazy," which would become a cult hit in the UK as part of the Rare Groove phenomenon.
+
+
+=== The quartet becomes a trio ===
+
+By 1977 both June and Bonnie had left the group. June wanted to take a break, and Bonnie left to start a solo career. Bonnie married Motown Records producer Jeffrey Bowen in 1978. She subsequently signed a contract with Motown and this led to a brief, moderately successful, solo career. Her first self-titled album produced the disco song "Heaven Must Have Sent You". The album was produced by Berry Gordy and husband Jeffrey Bowen. The song became a top 20 pop hit in September 1979.
+On 22 January 1978 Ruth gave birth to her second daughter and, now a duo, Ruth and Anita cut back their schedules and concentrated on raising their families. They began talking about the future of the group and what direction it should take. They agreed to dispense with the 1940s nostalgia and go in a contemporary direction. In July of that year June married William Oliver Whitmore II.
+The two sisters then signed a deal with producer Richard Perry's Planet Records, which was distributed by Elektra Records. After contributing guest vocals on the group's cover of Sly Stone's "Everybody Is A Star" June was persuaded to return to the group, making it a trio. With Perry the trio began working on an album of West Coast soft rock, which was released in 1978 with the title Energy. The first single, a cover version of Bruce Springsteen's "Fire", climbed to #2 on the US singles charts in early 1979, and a third Allen Toussaint cover, "Happiness", also charted.
+In 1979 the trio released an album with a harder edged rock sound entitled Priority, and though it was not a huge commercial success it received very positive critical reviews and further strengthened the group's reputation for being versatile.
+
+
+=== The height of their success ===
+Over the next few years they achieved their greatest commercial success and continued to demonstrate their versatility. In 1980 the soulful pop single, "He's So Shy", reached number three on the charts, and the following year a slow, sultry ballad, "Slow Hand", reached number two. The follow-up, "Should I Do It" was classic girl-group. Richard Perry then switched distribution of Planet to RCA Records in 1982. The first release from this new union was "American Music", a patriotic-themed, modernized take on the girl-group sound while "I'm So Excited" was an influential, exuberant dance track. All these singles were significant hits in the US and were also successful in Australia, where all but "American Music" reached the Top 20.
+
+In 1983, the Pointer Sisters released what became their biggest-selling album ever with Break Out. That year Ruth became a grandmother for the first time. With the advent of MTV the sisters were able to exploit their visual style and extend their audience. In 1984 they achieved four Billboard Hot 100 top 10 singles in a row. "Automatic" reached #5; "Jump (for My Love)" reached #3; a remix of "I'm So Excited" was added to the album almost a year into its shelf life and reached #9; and another single from the album, "Neutron Dance", also featured on the Beverly Hills Cop soundtrack, reached #6.
+"I Need You" had been the lead single from the album, and was a significant R&B hit, peaking at #13 on the Black Singles charts. The album's last single, "Baby Come And Get It", did well on the Black Singles charts too but missed cracking the pop Top 40 by a hair. (It would be brought to life again in the next millennium through its use in Burger King television commercials.) They received Grammy Awards for Best Pop Performance by a Duo or Group with Vocal for "Jump (For My Love)", and Best Vocal Arrangement for Two or More Voices for "Automatic". These songs also followed "Slow Hand" into the UK Top 10, with "Automatic" peaking at number 2 in that country.
+These Planet singles marked the end of their run of Top 10 hits in the US, with their subsequent RCA releases "Dare Me" in 1984 (the Sisters' last Australian Top 10 hit), and "Goldmine" in 1986, reaching numbers 11 and 33 respectively. In 1985 Ruth became a grandmother for the second time.
+The sisters eventually left RCA Records to record for Motown and then SBK, releasing several group albums and individual solo albums along the way, but these projects did not achieve the level of success of their earlier work.
+
+
+=== Subsequent years ===
+In recent years the sisters have maintained a lower public profile but have continued to perform. Anita became a grandmother in 1990 when her only child Jada gave birth to Roxie. On September 8, 1990 Ruth married a man named Michael Sayles (born 1957). The sisters entertained US troops in the Persian Gulf in 1991 with Bob Hope. By 1991, June Pointer had ended her thirteen-year marriage to William Oliver Whitmore II. In August, 1993 at age 47 Ruth Pointer gave birth to twins Ali and Conor Sayles. In 1994, the Pointer Sisters were honored with a star on the Hollywood Walk of Fame and began touring with a production of the Fats Waller-based musical Ain't Misbehavin'. In 1995 Pointer Sisters recorded "Feel for the Physical" as a duet with Thomas Anders (of Modern Talking fame) for his album Souled. They were also one of the featured acts at the closing ceremonies of the 1996 Atlanta Summer Olympics.
+In 1995-96 the Pointer Sisters returned to their original jazzy incarnation touring nationally in Ain't Misbehavin': during this tour issues with June Pointer came to the fore as June Pointer missed many performances - understudy Wendy Edmead replaced her on these occasions - and in 2002 Ruth Pointer's daughter Issa Pointer began performing with the Pointer Sisters in June Pointer's stead. On June 9, 2002 June Pointer and Bonnie Pointer performed as a duo on the bill at the San Jose Gay Pride Celebration the pair having been recruited by a promoter who had failed to recruit the official Pointer Sisters trio for the event: the June/Bonnie Pointer duo's appearance at San Jose Pride was promoted as a "Pointer Sisters" gig with pictures of June Pointer performing with Anita Pointer and Ruth Pointer utilized in its promotion, causing Anita Pointer and Ruth Pointer to sue the promoter and other affiliates of the June/Bonnie Pointer duo's San Jose Pride gig (neither Bonnie Pointer nor June Pointer was named in the suit). Bonnie Pointer and June Pointer subsequently performed as a duo at other Gay Pride celebrations and participated in the Get Up 'n' Dance disco music tour in the summer of 2003, the duo being officially billed as "Bonnie and June Pointer, formerly of the Pointer Sisters".
+
+In 2004 Issa Pointer officially replaced June Pointer in the Pointer Sisters trio being featured on the live album The Pointer Sisters - Live in Billings recorded April 2004 at the Alberta Bair Theatre in Billings MT. The first studio recording by the Pointer Sisters to feature Issa Pointer was "Christmas in New York" for YMC Records www.ymcrecords.com recorded in the summer of 2005 for release for the multi-artist seasonal release Smooth & Soulful Christmas Collection on YMC Records: "Christmas in New York" afforded the Pointer Sisters their last appearance on a Billboard chart to date, the track reaching #21 on the Billboard Adult Contemporary chart. Christmas In New York was written by Nathan East and Chris Christian and produced by them. The group's next recording was a remake of the Eurythmics' "Sisters Are Doin' It for Themselves" recorded with Natalia: this track spent sixteen weeks in the Top 20 of Belgium's Flemish chart from October 2005 with a peak of #2. In 2008 Anita Pointer, Ruth Pointer and Issa Pointer recorded the last Pointer Sisters album to date The Pointer Sisters Favorites consisting of remakes of ten of the group's biggest hits: recorded in response to the group's failure to receive royalties from the inclusion of any Pointer Sisters' hits on multi-artist hits compilations, "...Favorites" has been sold exclusively at the group's live gigs and at the website ThePointerSisters.com .
+In recent years many Pointer Sisters songs have been covered by contemporary artists, such as "Jump (for My Love)" by Girls Aloud, which reached number two at the UK singles chart in 2003, "Dare Me" was turned into the dance smash "Stupidisco" by Belgian DJ Junior Jack, indie band Le Tigre covered in 2004 "I'm So Excited" on their third album This Island, and French DJ Muttonheads sampled "Back In My Arms" on his 2005 club hit "I'll Be There". Most recently in 2007, Tommy Boy recording artist Ultra Naté has released a dance-pop cover of "Automatic" that reached #1 at the US Hot Dance Music/Club Play charts. In 2005, "Pinball Number Count" was re-edited for Coldcut's Ninja Tune label, becoming a surprise dance hit. The same song has also been remixed by Venetian Snares of the Planet Mu record label.[citation needed]
+The Pointer Sisters have maintained a high international profile as performers: in 2002 they participated at the annual Night of the Proms, a successful series of concerts combining pop and classical music, taking place in the Benelux, France and Germany: the Pointer Sisters received the highest audience ratings of all participating Night of the Proms acts in 2002.[citation needed] In January 2006 the Pointer Sisters concert collaboration with Natalia resulted in ten sold out dates in Antwerp with the "Natalia Meets The Pointer Sister" concerts, selling out 130.000 tickets for the 10 date concert run.
+On June 7, 2006 Anita Pointer guest-starred on Celebrity Duets singing with Olympic gymnast Carly Patterson on "I'm So Excited": on the following night's results show the duo's encore was "Jump (For My Love)".
+Since August 2009 Ruth, Anita and Bonnie Pointer have reunited. On August 4, 2009 they stopped by The Kibitz Room at Canter's in Los Angeles and jammed with the band and Ruth's son Malik Pointer. They sang "Fire," "Yes We Can Can," and "Going Down Slowly." On November 4, 2009, The Pointer Sisters played "I'm So Excited" and "The Neutron Dance" on CBS morning show The Early Show with Ruth's granddaughter, Sadako Johnson. Issa Pointer is currently pursuing a solo career.
+In November 2011 the Pointer Sisters toured Australia and played one gig in New Zealand with a lineup consisting of Ruth Pointer, Sadako Johnson and Issa Pointer; the last-named was a last minute and presumably temporary replacement for Anita Pointer, who did not feel up to travel due to an unnamed health concern. (Sources close to Anita Pointer have denied the assertion by Bonnie Pointer that Anita has been diagnosed with cancer.)[citation needed] Ruth Pointer, Sadako Johnson and Issa Pointer were also the personnel for a February 11, 2012 Pointer Sisters concert in Metairie LA. At the July 6, 2012 Essence Fest show in New Orleans, Anita Pointer had rejoined the group, the lineup for that concert being Ruth and Anita Pointer and Sadako Johnson. In an August 2012 interview Ruth Pointer stated: "Anita has had some health issues recently so we try to give her a break when she needs it. When that happens we bring my daughter [Issa Pointer] in to fill in for her." At most recent Pointer Sisters concert, performing with the Columbus Symphony on June 14, 2013 (and filling in for Chaka Khan with a week's notice), the lineup was Anita, Ruth and Issa Pointer.
+The Pointer Sisters were inducted into the Vocal Group Hall of Fame in 2005.
+
+
+=== Vice City Dance ===
+In Grand Theft Auto: Vice City, the Malibu club in the game featured a Village People tribute in which they danced to "Automatic". This dance involved the dancers crossing the hands by their knees for two beats then raising the roof for another two.[citation needed]
+
+
+=== Tragedy and controversy ===
+In November 2000, the sisters lost their mother Sarah; in 2003, sister Anita lost her only child Jada to cancer. Jada was the subject of the 1973 song "Jada". On April 11, 2006, June Pointer died of lung cancer. According to an official family statement she was surrounded by her sisters Ruth and Anita as well as brothers Aaron Pointer and Fritz. On May 4, 2006, sister Bonnie appeared on Entertainment Tonight saying the other sisters had not fulfilled the burial wishes for June, instead having her cremated because it was cheaper. Bonnie also stated the sisters had not let her ride in the family car at the funeral. Anita and Ruth responded that Bonnie had demanded to be let back into the group and was upset that she had not been allowed to rejoin it, and that June had left no instructions for her burial. The sisters seemed estranged from Bonnie until she joined Anita Pointer on the Idol Radio Show in 2007.[citation needed]
+Bonnie Pointer was arrested for allegedly possessing crack cocaine on November 18, 2011, in South Los Angeles, after the car she was riding in was pulled over for a mechanical malfunction.
+
+
+== Members ==
+Current members
+Anita Pointer (1969-present)
+Ruth Pointer (1972-present)
+Sadako Pointer (2009-present)
+Issa Pointer (2004-present)
+Former members
+Bonnie Pointer (1969-1977)
+June Pointer (1969-2004)
+
+
+== Awards ==
+
+
+=== Grammy Awards ===
+The Grammy Awards are awarded annually by the National Academy of Recording Arts and Sciences. The Pointer Sisters have received three awards from nine nominations.
+Notes:
+Anita Pointer and Bonnie Pointer received an additional nomination as songwriters when "Fairytale" was nominated for the Grammy Award for Best Country Song.
+So Excited was nominated for the Grammy Award for Best Short Form Music Video. This nomination is credited to producer/director Richard Perry.
+
+
+=== American Music Awards ===
+The American Music Awards is an annual awards ceremony created by Dick Clark in 1973. The Pointer Sisters have received three awards from four nominations.
+
+
+== Discography ==
+
+
+=== US and UK Top Twenty singles ===
+The following thirteen singles reached the Top Twenty on the United States Billboard Hot 100 pop singles chart. Five also reached the top twenty of the United Kingdom UK Singles Chart.
+1973: "Yes We Can Can" (US #11)
+1974: "Fairytale" (US #13)
+1975: "How Long (Betcha' Got a Chick on the Side)" (US #20)
+1979: "Fire" (US #2)
+1980: "He's So Shy" (US #3)
+1981: "Slow Hand" (US #2; UK #10)
+1982: "Should I Do It" (US #13)
+1982: "American Music" (US #16)
+1984: "Automatic" (US #5; UK #2)
+1984: "Jump (For My Love)" (US #3; UK #6)
+1984: "I'm So Excited" (remix) (US #9; UK #11)
+1984: "Neutron Dance" (US #6)
+1985: "Dare Me" (US #11; UK #17)
+
+
+=== US and UK Top 40 albums ===
+The following albums reached the Top Forty on either the United States Billboard 200 pop albums chart or the United Kingdom UK Albums Chart.
+1973: The Pointer Sisters (US #13)
+1975: Steppin' (US #22)
+1978: Energy (US #13)
+1980: Special Things (US #34)
+1981: Black & White (US #12; UK #21)
+1983: Break Out (US #8; UK #9)
+1985: Contact (US #25; UK #34)
+1989: Jump: The Best of the Pointer Sisters (UK #11)
+
+
+== See also ==
+List of artists who reached number one on the Billboard R&B chart
+List of number-one dance hits (United States)
+List of artists who reached number one on the US Dance chart
+
+
+== References ==
+
+
+== External links ==
+Official website
+The Pointer Sisters at AllMusic
+progressive rock radio :: Progressive rock is a radio station programming format that prospered in the late 1960s and 1970s, in which the disc jockeys are given wide latitude in what they may play, similar to the freeform format but with the proviso that some kind of rock music is almost always what is played. The name for the format came from around 1968, when serious disc jockeys were playing "progressive 'music for the head'" and discussing social issues in between records.
+
+
+== Origins ==
+When FM broadcasting licenses were first issued by the FCC, broadcasters were slow to take advantage of the new airwaves available to them because their advertising revenues were generated primarily from existing AM broadcasting stations and because there were few FM radio receivers owned by the general public. This void created an opportunity for the disenchanted youth counterculture of the 1960s to express itself by playing music that was largely ignored by mainstream outlets. In this sense, progressive rock radio was more of a social response than a product marketed to fill a need.
+This change coincided with the greater emphasis on albums as opposed to singles in the rock market. Hugely popular albums such as The Beatles' Sgt. Pepper's Lonely Hearts Club Band did not contain any singles, so there was clearly a need for a radio format that would explore beyond the Top 40. This in turn led to rock artists placing greater emphasis on long or experimental album tracks, knowing they could still receive radio airplay.
+
+
+== Definition ==
+The progressive rock radio format should not be confused with the progressive rock music genre. While progressive rock music was certainly played on progressive rock stations, other varieties of rock music were also played. Generally everything from early Beatles and early Dylan on forward was fair game. Progressive rock radio was generally the only outlet for fringe rock genres such as space rock and quiet, acoustic-based folk rock and country rock (often played on weekend mornings). Progressive stations were also known for having "turntable hits", songs by obscure artists that did not sell much and were not hits by any conventional measure, but which listeners kept calling up and requesting; Sweet Thursday's "Gilbert Street" was a good example on the East Coast.
+The progressive rock radio format grew out of the freeform radio format, and, sharing the key characteristic of disc jockeys having the freedom to play what they chose, has sometimes been referred to as "freeform rock radio" or "freeform progressive radio" or simply "FM rock radio". But as they evolved there were key differences between the freeform and progressive rock formats:
+Freeform could play any genre of music; progressive rock generally limited itself to (various kinds of) rock.
+After its early days, freeform tended towards small or "underground" stations in non-commercial or niche markets; progressive rock could and did handle big-signal stations in large markets.
+Progressive rock was intended to be as fully commercially viable as any other mainstream radio format; freeform usually shunned such ambitions.
+The progressive rock format had a large impact on the commercial rock music industry at the time; the freeform format generally did not.
+
+
+== Stations and personnel ==
+The archetypal successful and influential progressive rock radio station was WNEW-FM in New York in the late 1960s, 1970s, and into the 1980s. For instance, Keith Emerson credited it for breaking Emerson, Lake & Palmer into the United States market. Other long-running, large-market examples included WMMR in Philadelphia (credited with helping to break Bruce Springsteen), WBCN in Boston, WXRT in Chicago, WMMS in Cleveland, CJOM and WABX in Detroit/Windsor, WZMF in Milwaukee, KQRS-FM in Minneapolis, WOWI in Norfolk, WORJ-FM in Orlando, KSAN in San Francisco, and KMET in Los Angeles. Many of the higher-profile stations among these were owned by Metromedia. College progressive rock radio stations included WVBR in Ithaca, New York, WKNC in Raleigh, North Carolina, WBRU in Providence, Rhode Island, WRPI in Troy, New York, and WWUH in Hartford, Connecticut.
+Pioneering progressive rock radio disc jockey and program directors included Scott Muni in New York, Lee Arnold in Orlando, and Tom Donahue in San Francisco.
+
+
+== Fate and echoes ==
+Over time (some much faster than others), the large-city progressive rock stations usually lost DJ freedom and adopted the more structured and confined album-oriented rock format in the 1970s or 1980s, and then later the nostalgic classic rock format in the 1980s or 1990s, while the smaller progressive rock stations sometimes turned to the college rock or alternative rock. Where once "progressive rock radio [was] the key media of ascendant rock culture", as writer Nelson George put it, by 1987, musician and author Robert Palmer would write, "The glory days of 'progressive' rock radio - when the disk jockey actually chose the records he played and creatively juxtaposed songs and styles - are long gone."
+While freeform stations are still around in the 2000s, such as New Jersey's WFMU, and while 95.7 the Ride in Charlotte, North Carolina, recalls the format's original sound, there may be no real examples of the specific progressive rock radio format in existence today on the FM dial. The Deep Tracks channel on Sirius XM Satellite Radio plays some of the music originally heard on progressive rock radio, but without pronounced disc jockey personalities or the full feel of the original format. Stuck in the Psychedelic Era, a syndicated program heard on some non-commercial stations, recreates the format, but seldom includes recordings made after 1970. Some of the spirit of progressive rock radio (albeit in a more mellow, "adult" form) can also be found in the adult album alternative format.
+
+
+== References ==
+Mike Appel :: Mike Appel (born October 27, 1942) is an American music industry manager and record producer, best known for his role in both capacities in the early career of Bruce Springsteen.
+Appel was born in Flushing in Queens, New York, of three-quarters Irish and one-quarter Jewish heritage and was raised Roman Catholic. His father was a successful real estate broker on Long Island. Appel began playing the guitar at age fourteen.
+Appel was a guitarist and songwriter for several obscure groups during the 1950s and 1960s. He was a member of The Balloon Farm, and co-wrote their 1967 hit A Question of Temperature. He also was a producer and songwriter for the early metal band Sir Lord Baltimore.
+In 1971, Carl 'Tinker' West, the manager of some of Springsteen's early bands - Child, Steel Mill and The Bruce Springsteen Band - referred Springsteen to Appel. Springsteen auditioned for Appel in 1971; Appel told him to come back when he had written more songs. When Springsteen returned in 1972, Appel signed Springsteen to a production contract, and got Springsteen the audition with CBS Records' John H. Hammond that led to CBS's signing Springsteen. He produced Springsteen's first two albums, Greetings from Asbury Park, N.J. and The Wild, the Innocent & the E Street Shuffle, both released in 1973. He also co-produced Springsteen's third and breakthrough album, Born to Run.
+Appel gradually fell out of favor with Springsteen during after the recording of Born to Run. Springsteen sought to replace Appel as both manager and record producer with Jon Landau by 1976. A lengthy legal battle between Appel and Springsteen ensued, which was eventually settled out of court. Appel, who was not able to find further success in the industry, subsequently co-wrote the 1992 book Down Thunder Road about his experiences with Springsteen.
+Appel is generally credited for his aggressive tactics in getting Springsteen's career started, although his production abilities have often been criticized. However, Appel is also sometimes credited with fostering the looser, more musically adventurous and lyrically romantic approach of Springsteen's first two albums. After Landau took over, Springsteen's work became more tightly focused in musical terms and more political in content.
+Appel also co-wrote four songs with Wes Farrell and Jim Crerecos that were recorded by the Partridge Family, including the chart hit "Doesn't Somebody Want to Be Wanted" (US #6, 1971) and the album tracks "Somebody Wants To Love You" (1970), "Rainmaker" (1971) and, in particular, "I Can Feel Your Heartbeat" (1970), which former Partridge Family lead singer David Cassidy occasionally performs in live solo concerts.
+
+
+== References ==
+
+
+== Bibliography ==
+Eliot, Marc with Appel, Mike. Down Thunder Road. Simon & Schuster, 1992. ISBN 0-671-86898-5.
+Heylin, Clinton, E Street Shuffle: The Glory Days of Bruce Springsteen & The E Street Band, Viking, 2012, ISBN 978-0670-02662-3
+
+
+== External links ==
+Allmusic.com profile by Richie Unterberger
